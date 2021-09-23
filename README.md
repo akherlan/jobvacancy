@@ -24,5 +24,5 @@ Progres:
 -   [ ] deploy
 
 Telegram group: [Komunitas R Indonesia](https://t.me/GNURIndonesia)  
-Telegram channel lowongan R: [@gnuridjobs](https://t.me/gnuridjobs)
-Telegram channel feed artikel R: [@feed_r](https://t.me/feed_r)
+Telegram channel lowongan R: [\@gnuridjobs](https://t.me/gnuridjobs)   
+Telegram channel feed artikel R: [\@feed_r](https://t.me/feed_r)
