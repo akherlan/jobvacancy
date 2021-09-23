@@ -1,11 +1,165 @@
+library(jsonlite)
 library(stringr)
-suppressPackageStartupMessages(library(dplyr))
+library(dplyr)
 
-# description formatting -----
-desc_formatting <- function(vacancy, rownum) {
+# get vacancy
+glints_vacancy <- function(limit = 50L, cty = "ID", type = "FULL_TIME") {
+  
+  base_url <- "https://glints.com/api/jobs"
+  
+  countryCode   <- cty
+  jobTypes      <- type
+  # INTERNSHIP, FULL_TIME, PART_TIME, PROJECT_BASED
+  JobCategoryId <- "{%22$in%22:[1,2,5,7,10]}"
+  # when looking for vacancies with keyword "data analyst" manually on the web
+  # five categories below are appear in the filter column
+  # 1  = software enggineering
+  # 2  = data science
+  # 5  = marketing
+  # 7  = bussiness development / sales
+  # 10 = finance
+  # for more, see: glints_category()
+  startDate     <- as.character.Date(Sys.Date()-1)
+  status        <- "OPEN"
+  limit         <- limit
+  
+  # %22 is doublequote and 
+  # %2C is comma
+  # %7B is left curly bracket
+  # %7D is left curly bracket
+  # ref: https://www.unicodepedia.com/unicode/basic-latin/2c/comma/
+  
+  query <- paste0(
+    base_url, "?where={",
+    "%22CountryCode%22:%22", countryCode, "%22%2C",
+    "%22type%22:%22", jobTypes, "%22%2C",
+    "%22JobCategoryId%22:", JobCategoryId, "%2C",
+    # '"startDate":"', startDate, '%22%2C',
+    "%22status%22:%22", status, "%22}&limit=", limit
+  )
+  
+  vacancy <- fromJSON(query)
+  
+  if(vacancy$count > 0) {
+    print(
+      paste("Mengambil", limit, "dari", vacancy$count, "data lowongan kerja", 
+            sep = " ")
+    )
+  } else {
+    print(paste0("Tidak ada lowongan pada ", startDate))
+  }
+  
+  vacancy <- vacancy$data %>% 
+    as_tibble() %>% 
+    select(id, title, JobCategoryId, CompanyId, type, descriptionRaw, 
+           minYearsOfExperience, maxYearsOfExperience, numberOfHires,
+           deadline, startDate, endDate, durationLegacy, expiryDate,
+           status, isPublic, isRemote, closedAt, createdAt, updatedAt)
+  
+  return(vacancy)
+  
+}
+
+
+# post formatting
+glints_post <- function(rownum = 1L) {
+  
+  # using generic function: glints_descform()
+  
+  # position
+  
+  jobtitle <- vacancy$title[[rownum]]
+  
+  # company
+  # link: https://glints.com/id/companies/{CompanyName}/{CompanyId}
+  
+  jobhire_baseurl <- "https://glints.com/api/companies/"
+  company_id <- vacancy$CompanyId[[rownum]]
+  
+  jobhire <- fromJSON(
+    paste0(jobhire_baseurl, company_id)
+  )$data$name
+  
+  # desctiption
+  
+  jobdesc <- glints_descform(vacancy, rownum)
+  
+  # link
+  
+  joburl <- paste(
+    "https://glints.com/id/opportunities/jobs",
+    jobtitle %>% 
+      tolower() %>% 
+      str_remove_all("\\(") %>% 
+      str_remove_all("\\)") %>% 
+      str_remove_all("-") %>% 
+      str_remove_all("\\.") %>% 
+      str_remove_all("\\/") %>% 
+      str_remove_all("&") %>% 
+      str_squish() %>% 
+      str_replace_all("\\s", "-"), 
+    vacancy$id[[rownum]],
+    sep = "/")
+  
+  # body
+  
+  jobpost <- paste(
+    paste0("<strong>", str_to_upper(jobtitle), "</strong>"),
+    paste0("at ", jobhire, "<br>"),
+    paste0(jobdesc, "<br>"),
+    joburl,
+    sep = "<br>"
+  )
+  
+  return(jobpost)
+  
+}
+
+
+# get category
+
+glints_category <- function() {
+  
+  category <- fromJSON("https://glints.com/api/jobCategories/")
+  category <- category$data %>% as_tibble()
+  category <- category %>% 
+    select(id, name, descriptionMarkdown, createdAt, updatedAt) %>% 
+    as_tibble(category) %>% 
+    arrange(id)
+  return(category)
+  
+}
+
+
+# get company
+glints_company <- function(limit = 50L, cty = "ID") {
+  
+  limit <- limit
+  cty <- cty
+  company <- fromJSON(
+    paste0(
+      "https://glints.com/api/companies?where={%22CountryCode%22:%22", cty, "%22}",
+      "&limit=", limit
+    )
+  )
+  
+  count <- company$count
+  print(paste("Mengambil", limit, 
+              "dari", count, "rekaman data perusahaan",
+              sep = " "))
+  
+  company <- as_tibble(company$data)
+  
+  return(company)
+  
+}
+
+
+# description formatting
+glints_descform <- function(df, rownum) {
   
   # one row data to be formatted
-  topost_data <- vacancy[rownum,] %>% 
+  topost_data <- df[rownum,] %>% 
     select(id, title, CompanyId, isRemote, descriptionRaw,
            minYearsOfExperience, maxYearsOfExperience,
            expiryDate, createdAt, updatedAt)
@@ -78,7 +232,6 @@ desc_formatting <- function(vacancy, rownum) {
     
   }
   
+  return(topost_text)
+  
 }
-
-# usage example
-# jobvac <- desc_formatting(vacancy, 14)

@@ -1,0 +1,5 @@
+if (!require("dplyr")) install.packages("dplyr")
+if (!require("tidyr")) install.packages("tidyr")
+if (!require("stringr")) install.packages("stringr")
+if (!require("jsonlite")) install.packages("jsonlite")
+if (!require("telegram.bot")) install.packages("telegram.bot")
