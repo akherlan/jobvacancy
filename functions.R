@@ -1,5 +1,6 @@
 library(jsonlite)
 library(stringr)
+library(rvest)
 suppressPackageStartupMessages(library(dplyr))
 
 # get vacancy
@@ -38,7 +39,6 @@ glints_vacancy <- function(limit = 50L, cty = "ID", type = "FULL_TIME") {
     "%22status%22:%22", status, "%22}&limit=", limit
   )
   
-  
   vacancy <- fromJSON(query)
   
   if(vacancy$count > 0){
@@ -47,13 +47,8 @@ glints_vacancy <- function(limit = 50L, cty = "ID", type = "FULL_TIME") {
             sep = " ")
     )
   } else if (vacancy$count == 0){
-    # if there is no data in the startDate, stop the process
-    stop(
-      paste0(
-        "\nTidak ada data lowongan pada ", startDate,
-        "\nProses dihentikan"
-      )
-    )
+    # if there is no data pulled, stop the process
+    stop("Tidak ada data lowongan tersedia")
   } else {
     # another condition
     stop(
@@ -68,6 +63,13 @@ glints_vacancy <- function(limit = 50L, cty = "ID", type = "FULL_TIME") {
            deadline, startDate, endDate, durationLegacy, expiryDate,
            status, isPublic, isRemote, closedAt, createdAt, updatedAt) %>% 
     arrange(desc(updatedAt))
+  
+  names(vacancy) <- c(
+    "id", "title", "JobCategoryId", "company_id", "type", "descriptionRaw", 
+    "min_experience", "max_experience", "num_hire",
+    "deadline", "startDate", "endDate", "durationLegacy", "expiryDate",
+    "status", "is_public", "is_remote", "closedAt", "createdAt", "updatedAt"
+  )
   
   return(vacancy)
   
@@ -108,14 +110,25 @@ glints_post <- function(vacancy, num = 1L) {
   jobtitle <- vacancy$title[[num]]
   
   # company
-  # link: https://glints.com/id/companies/{CompanyName}/{CompanyId}
-  
-  jobhire_baseurl <- "https://glints.com/api/companies/"
-  company_id <- vacancy$CompanyId[[num]]
-  
-  jobhire <- fromJSON(
-    paste0(jobhire_baseurl, company_id)
-  )$data$name
+
+  if(!is.null(vacancy$company_name)){
+    
+    # using company name from table
+    jobhire <- vacancy$company_name[[num]]
+    message("Menggunakan kolom company_name")
+
+  } else if(!is.null(vacancy$company_id)){
+    
+    # pull company data from glints
+    jobhire_baseurl <- "https://glints.com/api/companies/"
+    jobhire <- fromJSON(
+      paste0(jobhire_baseurl, vacancy$company_id[[num]])
+    )$data$name 
+    message("Mencari data nama perusahaan dari web")
+    
+  } else {
+    stop("Gagal mendapatkan nama perusahaan")
+  }
   
   # desctiption
   
@@ -222,84 +235,129 @@ glints_company <- function(limit = 50L, cty = "ID") {
 }
 
 
-# description formatting
+# Description formatting -----
 glints_descform <- function(df, num) {
+  # using glints_joburl() then scrape for alternative
   
-  # one row data to be formatted
+  # row data to be formatted
   if(sum(str_detect(names(df), "descriptionRaw")) == 1){
     topost_desc <- df[num,] %>% 
       select(descriptionRaw)
+    
+    # descprition tabulation
+    desc <- topost_desc$descriptionRaw$blocks[[1]]
+    suppressMessages(desc <- bind_cols(desc$text, desc$type, desc$depth))
+    names(desc) <- c("text", "type", "depth")
+    
+    # html formatting markup
+    
+    if(sum(str_detect(desc$type, "list-item")) == 0) {
+      
+      # unstyled list with manual bullet or numering
+      topost_text <- desc %>% 
+        # pre-formatting
+        mutate(
+          text = str_replace_all(text, "\\n", "<br>"),
+          text = str_replace_all(text, "\\u2028", "<br><br>"),
+          text = str_replace(text, "^\\d{1,2}\\.?\\s?", "• "),
+          text = str_replace(text, "^-\\s?", "• "),
+          text = str_replace(text, "^·\\s?", "• "),
+          text = str_replace_all(text, "<br>-\\s", "<br>• "),
+          text = ifelse(
+            str_count(text, "([A-Za-z]+\\s)") <= 2 & 
+              !str_detect(text, "• "),
+            paste0("<br><strong>", text, "</strong><br>"),
+            text)
+        ) %>%  
+        .[[1]] %>% 
+        toString() %>% 
+        # post-formatting
+        str_replace_all(",\\s•\\s", "<br>• ") %>% 
+        str_replace_all("<br>,\\s", "<br>") %>% 
+        str_replace_all(",\\s<br>", "<br><br>") %>% 
+        str_replace_all("\\.,\\s", "\\.<br><br>") %>% 
+        str_remove_all("<strong></strong>") %>% 
+        str_replace_all("(<br>){3,4}", "<br><br>") %>%
+        str_remove("^<br>")
+      
+    } else if (sum(str_detect(desc$type, "list-item")) > 0) {
+      
+      # styled indent list
+      topost_text <- desc %>% 
+        # pre-formatting
+        mutate(
+          text = str_replace_all(text, "\\n", "<br>"),
+          text = str_replace_all(text, "\\u2028", "<br><br>"),
+          text = ifelse(
+            str_detect(type, "list-item"),
+            paste0("• ", text),
+            text),
+          text = ifelse(
+            str_count(text, "([A-Za-z]+\\s)") <= 2 & 
+              !str_detect(type, "list-item"),
+            paste0("<br><strong>", text, "</strong><br>"),
+            text)
+        ) %>%  
+        .[[1]] %>% 
+        toString() %>%
+        # post-formatting
+        str_replace_all(",\\s•\\s", "<br>• ") %>% 
+        str_replace_all("<br>,\\s", "<br>") %>% 
+        str_replace_all(",\\s<br>", "<br><br>") %>%
+        str_replace_all("\\.,\\s", "\\.<br><br>") %>% 
+        str_remove_all("<strong></strong>") %>% 
+        str_replace_all("(<br>){3,4}", "<br><br>") %>%
+        str_remove("^<br>")
+      
+    } else {
+      
+      # others
+      topost_text <- paste0("Click the link")
+      
+    }
+    
+    return(topost_text)
+    
   } else {
-    stop("Kolom deskripsi tidak tersedia")
-  }
-
-  # descprition tabulation
-  desc <- topost_desc$descriptionRaw$blocks[[1]]
-  suppressMessages(desc <- bind_cols(desc$text, desc$type, desc$depth))
-  names(desc) <- c("text", "type", "depth")
-  
-  # html formatting markup
-  
-  if(sum(str_detect(desc$type, "list-item")) == 0) {
     
-    # unstyled list with manual bullet or numering
-    topost_text <- desc %>% 
-      mutate(
-        text = str_replace_all(text, "\\n", "<br>"),
-        text = str_replace(text, "^\\d{1,2}\\.?\\s?", "• "),
-        text = str_replace(text, "^-\\s?", "• "),
-        text = str_replace(text, "^·\\s?", "• "),
-        text = str_replace_all(text, "<br>-\\s", "<br>• "),
-        text = ifelse(
-          str_count(text, "([A-Za-z]+\\s)") <= 2 & 
-            !str_detect(text, "• "),
-          paste0("<br><strong>", text, "</strong><br>"),
-          text)
-      ) %>%  
-      .[[1]] %>% 
+    message("Kolom deskripsi tidak tersedia, metode scraping digunakan")
+    
+    url <- glints_joburl(vacancy, num)
+    
+    f <- read_html(url)
+    desc <- html_element(f, ".DraftEditor-editorContainer")
+    
+    # assuming prefered description tag
+    desc <- desc %>% 
+      html_children() %>% 
+      html_children() %>% 
+      html_children() %>% 
+      html_children()
+    
+    # description tabulation
+    tag <- desc %>% html_name()
+    content <- desc %>% html_text()
+    
+    desc <- tibble(tag, content) %>% 
+      mutate(content = str_squish(str_replace(content, "^(.+)$", "\\1<br>")),
+             content = ifelse(str_detect(tag, "li"), 
+                              str_replace(content, "^(.+)$", "• \\1"),
+                              content),
+             content = ifelse(str_detect(tag, "div") & 
+                                str_count(content, "\\w+\\s") < 3,
+                              str_replace(content, "^(.+)$", "<strong>\\1</strong>"),
+                              content))
+    
+    topost_text <- desc$content %>% 
       toString() %>% 
-      str_replace_all(",\\s•\\s", "<br>• ") %>% 
-      str_replace_all("<br>,\\s", "<br>") %>% 
-      str_replace_all(",\\s<br>", "<br><br>") %>% 
-      str_replace_all("\\.,\\s", "\\.<br><br>") %>% 
-      str_remove_all("<strong></strong>") %>% 
-      str_replace_all("(<br>){3,4}", "<br><br>") %>%
-      str_remove("^<br>")
+      str_replace_all(",\\s,\\s", "<br>") %>% 
+      str_replace_all(">,\\s", ">") %>% 
+      str_replace_all("<br></strong>(<br>)?", "</strong><br><br>") %>% 
+      str_remove("<br>$")
     
-  } else if (sum(str_detect(desc$type, "list-item")) > 0) {
-    
-    # styled indent list
-    topost_text <- desc %>% 
-      mutate(
-        text = str_replace_all(text, "\\n", "<br>"),
-        text = ifelse(
-          str_detect(type, "list-item"),
-          paste0("• ", text),
-          text),
-        text = ifelse(
-          str_count(text, "([A-Za-z]+\\s)") <= 2 & 
-            !str_detect(type, "list-item"),
-          paste0("<br><strong>", text, "</strong><br>"),
-          text)
-      ) %>%  
-      .[[1]] %>% 
-      toString() %>% 
-      str_replace_all(",\\s•\\s", "<br>• ") %>% 
-      str_replace_all("<br>,\\s", "<br>") %>% 
-      str_replace_all(",\\s<br>", "<br><br>") %>%
-      str_replace_all("\\.,\\s", "\\.<br><br>") %>% 
-      str_remove_all("<strong></strong>") %>% 
-      str_replace_all("(<br>){3,4}", "<br><br>") %>%
-      str_remove("^<br>")
-    
-  } else {
-    
-    # others
-    topost_text <- paste0("Click the link")
+    return(topost_text)
     
   }
-  
-  return(topost_text)
   
 }
 
