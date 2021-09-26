@@ -140,17 +140,54 @@ glints_post <- function(vacancy, num = 1L) {
 }
 
 
+# get industry
+glints_industry <- function() {
+  
+  limit <- 1
+  industry <- fromJSON(
+    paste0("https://glints.com/api/industries?limit=", limit)
+  )
+  
+  limit <- industry$count
+  industry <- fromJSON(
+    paste0("https://glints.com/api/industries?limit=", limit)
+  )
+  
+  industry <- industry$data %>% 
+    select(-links, -overview) %>% 
+    as_tibble() %>% 
+    arrange(name)
+  return(industry)
+  
+}
+
+
 # get category
 
 glints_category <- function() {
   
-  category <- fromJSON("https://glints.com/api/jobCategories/")
-  category <- category$data %>% as_tibble()
-  category <- category %>% 
+  category <- fromJSON("https://glints.com/api/jobCategories")
+  category <- category$data %>% 
     select(id, name, descriptionMarkdown, createdAt, updatedAt) %>% 
-    as_tibble(category) %>% 
+    as_tibble() %>% 
     arrange(id)
   return(category)
+  
+}
+
+# get skill by job category id
+
+glints_skill <- function(catid){
+  
+  base_url <- "https://glints.com/api/jobCategories"
+  q <- paste(base_url, catid, "skills", sep = "/")
+  skill <- fromJSON(q)$data %>% 
+    as_tibble() %>% 
+    select(id, name, popularity, createdAt, updatedAt)
+  skill$popularity <- as.integer(skill$popularity)
+  skill <- arrange(skill, desc(popularity))
+  
+  return(skill)
   
 }
 
@@ -158,8 +195,6 @@ glints_category <- function() {
 # get company
 glints_company <- function(limit = 50L, cty = "ID") {
   
-  limit <- limit
-  cty <- cty
   company <- fromJSON(
     paste0(
       "https://glints.com/api/companies?where={%22CountryCode%22:%22", cty, "%22}",
@@ -168,11 +203,19 @@ glints_company <- function(limit = 50L, cty = "ID") {
   )
   
   count <- company$count
-  print(paste("Mengambil", limit, 
-              "dari", count, "rekaman data perusahaan",
-              sep = " "))
+  message(
+    paste(
+      "Mengambil", limit, 
+      "dari", count, "rekaman data perusahaan",
+      sep = " "
+    )
+  )
   
-  company <- as_tibble(company$data)
+  company <- company$data %>% 
+    select(id, name, IndustryId, address, website, logo, tagline,
+           isVerified, isHiring, CityId, CountryCode, 
+           createdAt, updatedAt) %>% 
+    as_tibble()
   
   return(company)
   
@@ -261,7 +304,7 @@ glints_descform <- function(df, num) {
 }
 
 # detect R skill requirement in text description
-detect_r <- function(text){
+detect_skill_r <- function(text){
   if(
     sum(str_detect(text, "\\sr$")) > 0 |
     sum(str_detect(text, "\\sr\\.")) > 0 |
