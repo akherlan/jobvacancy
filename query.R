@@ -20,15 +20,13 @@ company <- glints_company(20)
 
 # query
 vacancy <- glints_vacancy(100)
-View(vacancy)
 
-num = 1
-v <- vacancy %>% select(-updatedAt)
-v <- vacancy
-glints_post(v, num)
-glints_joburl(v, num)
-glints_descform(v, num)
-detect_skill_r(glints_descform(v, num))
+# num = 20
+# v <- vacancy
+# glints_post(v, num)
+# glints_joburl(v, num)
+# glints_descform(v, num)
+# detect_skill_r(glints_descform(v, num))
 
 # graphql query
 
@@ -138,7 +136,21 @@ names(vacancy) <- c(
   "salary_estim_max", "salary_estim_currency"
 )
 
+# R programming requirement detection
+for (s in 1:nrow(vacancy)) {
+  p <- suppressMessages(glints_post(vacancy[s,]))
+  d <- detect_skill_r(p)
+  if(d) {
+    message(sprintf("Data ke %s memenuhi kualifikasi", s))
+    if("r" %in% ls()){
+      r <- append(r, s)
+    } else {
+      r <- c()
+      r <- append(r, s)
+    }
+  } else {
+    message(sprintf("Melewati data ke %s", s))
+  }
+  Sys.sleep(1)
+}
 
-glints_joburl(vacancy, 3)
-glints_post(vacancy, 3)
-detect_skill_r(glints_post(vacancy, 3))

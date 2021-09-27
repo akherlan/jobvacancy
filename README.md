@@ -18,7 +18,7 @@ Progres:
 
 -   [x] format postingan
 -   [x] limit query
--   [ ] filter kualifikasi/skill
+-   [x] filter kualifikasi/skill
 -   [ ] command untuk bot
 -   [ ] dockerfile
 -   [ ] deploy

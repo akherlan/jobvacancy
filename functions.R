@@ -277,7 +277,7 @@ glints_descform <- function(df, num) {
         str_replace_all(",\\s<br>", "<br><br>") %>% 
         str_replace_all("\\.,\\s", "\\.<br><br>") %>% 
         str_remove_all("<strong></strong>") %>% 
-        str_replace_all("(<br>){3,4}", "<br><br>") %>%
+        str_replace_all("(<br>){3,}", "") %>%
         str_remove("^<br>")
       
     } else if (sum(str_detect(desc$type, "list-item")) > 0) {
@@ -306,7 +306,7 @@ glints_descform <- function(df, num) {
         str_replace_all(",\\s<br>", "<br><br>") %>%
         str_replace_all("\\.,\\s", "\\.<br><br>") %>% 
         str_remove_all("<strong></strong>") %>% 
-        str_replace_all("(<br>){3,4}", "<br><br>") %>%
+        str_replace_all("(<br>){3,}", "") %>%
         str_remove("^<br>")
       
     } else {
@@ -344,7 +344,8 @@ glints_descform <- function(df, num) {
                               str_replace(content, "^(.+)$", "• \\1"),
                               content),
              content = ifelse(str_detect(tag, "div") & 
-                                str_count(content, "\\w+\\s") < 3,
+                                str_count(content, "\\w+\\s") < 3 &
+                                !str_detect(content, "^-\\s"),
                               str_replace(content, "^(.+)$", "<strong>\\1</strong>"),
                               content))
     
@@ -352,6 +353,7 @@ glints_descform <- function(df, num) {
       toString() %>% 
       str_replace_all(",\\s,\\s", "<br>") %>% 
       str_replace_all(">,\\s", ">") %>% 
+      str_replace_all("<br>-\\s", "<br>• ") %>% 
       str_replace_all("<br></strong>(<br>)?", "</strong><br><br>") %>% 
       str_remove("<br>$")
     
@@ -361,8 +363,11 @@ glints_descform <- function(df, num) {
   
 }
 
-# detect R skill requirement in text description
+# Detect R skill requirement in text description -----
 detect_skill_r <- function(text){
+  
+  text <- str_to_lower(text)
+  
   if(
     sum(str_detect(text, "\\sr$")) > 0 |
     sum(str_detect(text, "\\sr\\.")) > 0 |
