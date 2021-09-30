@@ -1,10 +1,7 @@
-library(httr)
-library(jsonlite)
-library(stringr)
-suppressPackageStartupMessages(library(dplyr))
-library(tidyr)
-library(rvest)
+# Glints
+# <https://glints.com/id/>
 
+source("requirement.R")
 source("functions.R")
 source("function_graphql.R")
 
@@ -16,10 +13,10 @@ glints_skill(2)
 glints_industry()
 
 # list of company
-company <- glints_company(20)
+glints_company(10)
 
 # query
-vacancy <- glints_vacancy(100)
+vacancy <- glints_vacancy(70)
 
 # num = 20
 # v <- vacancy
@@ -29,12 +26,11 @@ vacancy <- glints_vacancy(100)
 # detect_skill_r(glints_descform(v, num))
 
 # graphql query
-
 url <- "https://glints.com/api/graphql"
 opnam <- "searchJobs"
 # key <- "data analyst"
 jobid <- 2
-limit <- 100
+limit <- 50
 var <- sprintf(
   '{
     "data": {
@@ -95,7 +91,7 @@ query <-
   }
 }'
 
-
+# pulling data
 jobs <- GQL(
   query = query,
   .variables = var,
@@ -106,6 +102,7 @@ jobs <- GQL(
 job_total <- jobs$searchJobs$totalJobs
 job <- jobs$searchJobs$jobsInPage
 
+# restructuring
 for (i in seq_along(job)) {
   s <- unlist(job[[i]])
   s <- cbind(name = names(s), value = s)
@@ -117,7 +114,11 @@ for (i in seq_along(job)) {
   }
 }
 
+# reforming
 vacancy <- vacancy %>% 
+  group_by(num, name) %>%
+  summarise_all(~toString(value)) %>% 
+  ungroup() %>% 
   pivot_wider(
     id_cols = "num", 
     names_from = "name",
@@ -125,28 +126,27 @@ vacancy <- vacancy %>%
   ) %>% 
   select(-num)
 
-# dput(names(vacancy))
+vacancy <- clean_names(vacancy)
 
-names(vacancy) <- c(
-  "id", "title", "is_remote", "status", "created_at", "is_hot",
-  "company_name", "company_id", "city", "country", "job_category", 
-  "salary_type","salary_mode", "salary_max", "salary_min", "salary_currency",
-  "applicant_count", "min_experience", "max_experience",
-  "city_subdivision", "salary_estim_min",
-  "salary_estim_max", "salary_estim_currency"
-)
+vacancy <- vacancy %>% 
+  select(
+    id, title, matches("category"), matches("city"),
+    country_name, applicant_count, matches("company"),
+    matches("experience"), matches("salaries"), matches("salary_estimate"),
+    status, is_remote, is_hot, created_at
+  )
 
 # R programming requirement detection
 for (s in 1:nrow(vacancy)) {
-  p <- suppressMessages(glints_post(vacancy[s,]))
+  p <- suppressMessages(glints_post(vacancy, s))
   d <- detect_skill_r(p)
   if(d) {
     message(sprintf("Data ke %s memenuhi kualifikasi", s))
     if("r" %in% ls()){
-      r <- append(r, s)
+      r <- append(r, p)
     } else {
       r <- c()
-      r <- append(r, s)
+      r <- append(r, p)
     }
   } else {
     message(sprintf("Melewati data ke %s", s))

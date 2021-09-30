@@ -237,7 +237,8 @@ glints_company <- function(limit = 50L, cty = "ID") {
 
 # Description formatting -----
 glints_descform <- function(df, num) {
-  # using glints_joburl() then scrape for alternative
+  # using description column as provided by API or
+  # alternatively using glints_joburl() then scrape
   
   # row data to be formatted
   if(sum(str_detect(names(df), "descriptionRaw")) == 1){
@@ -268,7 +269,7 @@ glints_descform <- function(df, num) {
               !str_detect(text, "• "),
             paste0("<br><strong>", text, "</strong><br>"),
             text)
-        ) %>%  
+        ) %>%
         .[[1]] %>% 
         toString() %>% 
         # post-formatting
@@ -277,7 +278,7 @@ glints_descform <- function(df, num) {
         str_replace_all(",\\s<br>", "<br><br>") %>% 
         str_replace_all("\\.,\\s", "\\.<br><br>") %>% 
         str_remove_all("<strong></strong>") %>% 
-        str_replace_all("(<br>){3,}", "") %>%
+        str_replace_all("(<br>){3,}", "<br><br>") %>%
         str_remove("^<br>")
       
     } else if (sum(str_detect(desc$type, "list-item")) > 0) {
@@ -306,7 +307,7 @@ glints_descform <- function(df, num) {
         str_replace_all(",\\s<br>", "<br><br>") %>%
         str_replace_all("\\.,\\s", "\\.<br><br>") %>% 
         str_remove_all("<strong></strong>") %>% 
-        str_replace_all("(<br>){3,}", "") %>%
+        str_replace_all("(<br>){3,}", "<br><br>") %>%
         str_remove("^<br>")
       
     } else {
@@ -371,6 +372,10 @@ detect_skill_r <- function(text){
   if(
     sum(str_detect(text, "\\sr$")) > 0 |
     sum(str_detect(text, "\\sr\\.")) > 0 |
+    sum(str_detect(text, "\\sr\\/")) > 0 |
+    sum(str_detect(text, "\\/r[,\\.\\s]")) > 0 |
+    sum(str_detect(text, "\\(r[,\\s]")) > 0 |
+    sum(str_detect(text, "\\sr\\s?\\)")) > 0 |
     sum(str_detect(text, "\\sr\\s")) > 0 |
     sum(str_detect(text, "^r\\s")) > 0 |
     sum(str_detect(text, "\\sr,")) > 0 |

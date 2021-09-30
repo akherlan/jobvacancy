@@ -1,7 +1,12 @@
-if (!require("httr")) install.packages("httr")
-if (!require("rvest")) install.packages("rvest")
-if (!require("jsonlite")) install.packages("jsonlite")
-if (!require("dplyr")) install.packages("dplyr")
-if (!require("tidyr")) install.packages("tidyr")
-if (!require("stringr")) install.packages("stringr")
-if (!require("telegram.bot")) install.packages("telegram.bot")
+lapply(
+  c(
+    "httr",
+    "jsonlite",
+    "rvest",
+    "stringr",
+    "dplyr",
+    "tidyr",
+    "janitor",
+    "telegram.bot"
+  ), function(x) if(!require(x, character.only = TRUE)) install.packages(x)
+)
