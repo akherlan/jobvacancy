@@ -2,9 +2,9 @@
 # <https://www.jobstreet.co.id/>
 
 source("requirement.R")
-source("function_graphql.R")
+lapply(list.files("function", ".R", full.names = TRUE), source)
 
-# parameters
+# parameter
 url <- "https://xapi.supercharge-srp.co/job-search/graphql?country=id&isSmartSearch=true"
 key <- "data analyst"
 page <- 1
@@ -98,39 +98,15 @@ jobs <- GQL(
   .url = url
 )
 
-query_meta <- jobs$jobs$solMetadata
+# (query_meta <- jobs$jobs$solMetadata)
 job <- jobs$jobs$jobs
 
-# restructuring
-for (i in seq_along(job)) {
-  s <- unlist(job[[i]])
-  s <- cbind(name = names(s), value = s)
-  s <- as_tibble(s) %>% mutate(num = i)
-  if(i == 1){
-    vacancy <- s
-  } else {
-    vacancy <- bind_rows(vacancy, s)
-  }
-}
-
-# reforming
-vacancy <- vacancy %>% 
-  group_by(num, name) %>%
-  summarise_all(~toString(value)) %>% 
-  ungroup() %>% 
-  pivot_wider(
-    id_cols = "num", 
-    names_from = "name",
-    values_from = "value"
-  ) %>% 
-  select(-num)
-
-names(vacancy) <- make_clean_names(names(vacancy), parsing_option = 1)
+vacancy <- restruct_job(job)
 
 # arranging
 vacancy <- vacancy %>% 
   select(
-    id, matches("job"), posted_at, matches("category"),
+    id, matches("job"), posted_at, matches("categories"),
     description, matches("company"), matches("employ"),
     matches("is_"), matches("location"), matches("country"), 
     matches("salary"), matches("selling")

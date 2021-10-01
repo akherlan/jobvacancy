@@ -4,7 +4,7 @@
 
 Untuk kemudahan supaya gak bolak-balik cek situs web lowongan kerja.
 
-### Rencana alur kerja:
+### Rencana alur kerja
 
 -   Tarik data dari web penyedia info lowongan kerja seperti:
     -   Glints
@@ -22,15 +22,17 @@ Mungkin kalau nanti ada kulgram, fitur itu akan cocok dan bisa sangat bermanfaat
 
 Akhirnya, mari kita jadikan worker saja untuk alat semi-otomatis forward lowongan kerja ke chat personal. Di sini tugas Admin untuk supervisi tetap dibutuhkan kalau mau forward ke channel. Manusia selalu lebih baik.
 
-### Progres:
+### Progres
 
 -   [x] Format postingan
 -   [x] Limit query
 -   [x] Filter kualifikasi/skill
--   [x] Cek redundansi (postingan terambil ulang karena tanggal update)
+-   [ ] Cek redundansi (postingan terambil ulang karena tanggal update)
 -   [ ] Github Action
 -   [ ] Google Apps Script integration
 -   [ ] Hilangkan Telegram bot ???
+
+### Tautan
 
 Telegram group: [Komunitas R Indonesia](https://t.me/GNURIndonesia)  
 Telegram channel lowongan R: [\@gnuridjobs](https://t.me/gnuridjobs)   

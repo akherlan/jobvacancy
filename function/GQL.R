@@ -3,6 +3,7 @@ require(jsonlite)
 
 # <https://gist.github.com/rentrop/83cb1d8fc8593726a808032e55314019>
 # url <- "https://glints.com/api/graphql"
+# url <- "https://xapi.supercharge-srp.co/job-search/graphql?country=id&isSmartSearch=true"
 
 GQL <- function(query, 
                 ..., 

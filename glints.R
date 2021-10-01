@@ -2,8 +2,7 @@
 # <https://glints.com/id/>
 
 source("requirement.R")
-source("functions.R")
-source("function_graphql.R")
+lapply(list.files("function", ".R", full.names = TRUE), source)
 
 # available job category
 glints_category()
@@ -25,10 +24,9 @@ vacancy <- glints_vacancy(70)
 # glints_descform(v, num)
 # detect_skill_r(glints_descform(v, num))
 
-# graphql query
+# parameter
 url <- "https://glints.com/api/graphql"
 opnam <- "searchJobs"
-# key <- "data analyst"
 jobid <- 2
 limit <- 50
 var <- sprintf(
@@ -99,36 +97,12 @@ jobs <- GQL(
   .url = url
 )
 
-job_total <- jobs$searchJobs$totalJobs
 job <- jobs$searchJobs$jobsInPage
 
-# restructuring
-for (i in seq_along(job)) {
-  s <- unlist(job[[i]])
-  s <- cbind(name = names(s), value = s)
-  s <- as_tibble(s) %>% mutate(num = i)
-  if(i == 1){
-    vacancy <- s
-  } else {
-    vacancy <- rbind(vacancy, s)
-  }
-}
+vacancy <- restruct_job(job)
 
-# reforming
-vacancy <- vacancy %>% 
-  group_by(num, name) %>%
-  summarise_all(~toString(value)) %>% 
-  ungroup() %>% 
-  pivot_wider(
-    id_cols = "num", 
-    names_from = "name",
-    values_from = "value"
-  ) %>% 
-  select(-num)
-
-vacancy <- clean_names(vacancy)
-
-vacancy <- vacancy %>% 
+# arranging
+vacancy <- vacancy
   select(
     id, title, matches("category"), matches("city"),
     country_name, applicant_count, matches("company"),
