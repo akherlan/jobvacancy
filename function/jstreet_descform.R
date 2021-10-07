@@ -8,13 +8,16 @@ jstreet_descform <- function(df, num) {
     
     f <- read_html(url)
     
-    desc <- html_element(f, ".vDEj0_0") %>% 
-      html_element(".sx2jih0")
+    desc <- html_element(f, ".vDEj0_0")
     
     # assuming prefered description tag
     desc <- desc %>% 
       html_children() %>% 
+      html_children() %>% 
       html_children()
+    
+    # chech one more indent
+    if (sum(html_name(desc) == "ul") == 0) desc <- html_children(desc)
     
     for (node in seq_along(desc)) {
       if (html_name(desc[node]) == "ul")
@@ -36,6 +39,7 @@ jstreet_descform <- function(df, num) {
     content <- sapply(descrip, html_text)
     desc <- tibble(tag, content)
     
+    # format text
     desc <- desc %>% 
       mutate(content = str_squish(content),
              content = ifelse(str_detect(tag, "li"), 
@@ -54,14 +58,19 @@ jstreet_descform <- function(df, num) {
                               str_replace(content, "^(.+)$", "<strong>\\1</strong>"),
                               content),
              content = str_replace(content, "^(.+)$", "\\1<br>"),
-             content = str_replace(content, "^<strong>", "<br><strong>")) %>% 
-      filter(!(tag == "p" & nchar(content) > 200))
+             content = str_replace(content, "^<strong>", "<br><strong>"))
     
+    # filter long paragraph
+    desc <- desc %>% 
+      filter(!((tag == "div" | tag == "p") & nchar(content) > 200))
+    
+    # clean format
     jp <- desc$content %>% 
       toString() %>% 
       str_replace_all(",\\s,\\s", "<br>") %>% 
       str_replace_all(">,\\s", ">") %>% 
       str_replace_all("<br>-\\s", "<br>• ") %>% 
+      str_replace_all("(\\w+\\.?\\s?)<br>(\\w+)", "\\1<br><br>\\2") %>% 
       str_replace_all("<br></strong>(<br>)?", "</strong><br><br>") %>% 
       str_remove("^<br>") %>% 
       str_remove("<br>$")
