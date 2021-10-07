@@ -2,27 +2,7 @@
 # <https://glints.com/id/>
 
 source("requirement.R")
-lapply(list.files("function", ".R", full.names = TRUE), source)
-
-# available job category
-glints_category()
-glints_skill(2)
-
-# available job industry
-glints_industry()
-
-# list of company
-glints_company(10)
-
-# query
-vacancy <- glints_vacancy(70)
-
-# num = 20
-# v <- vacancy
-# glints_post(v, num)
-# glints_joburl(v, num)
-# glints_descform(v, num)
-# detect_skill_r(glints_descform(v, num))
+for (f in list.files("function", ".R", full.names = TRUE)) source(f)
 
 # parameter
 url <- "https://glints.com/api/graphql"
@@ -89,7 +69,7 @@ query <-
   }
 }'
 
-# pulling data
+# pull data
 jobs <- GQL(
   query = query,
   .variables = var,
@@ -101,30 +81,24 @@ job <- jobs$searchJobs$jobsInPage
 
 vacancy <- restruct_job(job)
 
-# arranging
-vacancy <- vacancy
-  select(
-    id, title, matches("category"), matches("city"),
-    country_name, applicant_count, matches("company"),
-    matches("experience"), matches("salaries"), matches("salary_estimate"),
-    status, is_remote, is_hot, created_at
-  )
-
 # R programming requirement detection
 for (s in 1:nrow(vacancy)) {
-  p <- suppressMessages(glints_post(vacancy, s))
+  p <- suppressMessages(glints_descform(vacancy, s))
   d <- detect_skill_r(p)
   if(d) {
     message(sprintf("Data ke %s memenuhi kualifikasi", s))
     if("r" %in% ls()){
-      r <- append(r, p)
+      r <- append(r, s)
     } else {
       r <- c()
-      r <- append(r, p)
+      r <- append(r, s)
     }
   } else {
     message(sprintf("Melewati data ke %s", s))
   }
   Sys.sleep(1)
 }
+
+
+topost <- glints_post(vacancy, r)
 

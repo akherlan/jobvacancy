@@ -1,12 +1,12 @@
 lapply(
   c(
+    "dplyr",
     "httr",
+    "janitor",
     "jsonlite",
     "rvest",
     "stringr",
-    "dplyr",
-    "tidyr",
-    "janitor",
-    "telegram.bot"
+    "telegram.bot",
+    "tidyr"
   ), function(x) if(!require(x, character.only = TRUE)) install.packages(x)
 )

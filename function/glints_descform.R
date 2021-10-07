@@ -1,8 +1,8 @@
 # Description formatting
+# using description column as provided by API or
+# alternatively using glints_joburl() then scrape
 
 glints_descform <- function(df, num) {
-  # using description column as provided by API or
-  # alternatively using glints_joburl() then scrape
   
   # row data to be formatted
   if(sum(str_detect(names(df), "descriptionRaw")) == 1){
@@ -45,7 +45,9 @@ glints_descform <- function(df, num) {
         str_replace_all("(<br>){3,}", "<br><br>") %>%
         str_remove("^<br>")
       
-    } else if (sum(str_detect(desc$type, "list-item")) > 0) {
+    } 
+    
+    else if (sum(str_detect(desc$type, "list-item")) > 0) {
       
       # styled indent list
       topost_text <- desc %>% 
@@ -74,7 +76,9 @@ glints_descform <- function(df, num) {
         str_replace_all("(<br>){3,}", "<br><br>") %>%
         str_remove("^<br>")
       
-    } else {
+    } 
+    
+    else {
       
       # others
       topost_text <- paste0("Click the link")
@@ -83,7 +87,11 @@ glints_descform <- function(df, num) {
     
     return(topost_text)
     
-  } else {
+  } 
+  
+  else {
+    
+    # if there is no descriptionRaw column
     
     message("Kolom deskripsi tidak tersedia, metode scraping digunakan")
     
@@ -104,15 +112,18 @@ glints_descform <- function(df, num) {
     content <- desc %>% html_text()
     
     desc <- tibble(tag, content) %>% 
-      mutate(content = str_squish(str_replace(content, "^(.+)$", "\\1<br>")),
+      mutate(content = str_squish(content),
              content = ifelse(str_detect(tag, "li"), 
                               str_replace(content, "^(.+)$", "• \\1"),
                               content),
              content = ifelse(str_detect(tag, "div") & 
-                                str_count(content, "\\w+\\s") < 3 &
-                                !str_detect(content, "^-\\s"),
+                                str_count(content, "\\w+\\s") < 4 &
+                                !str_detect(content, "^-\\s") &
+                                !str_detect(content, "•\\s"),
                               str_replace(content, "^(.+)$", "<strong>\\1</strong>"),
-                              content))
+                              content),
+             content = str_replace(content, "^(.+)$", "\\1<br>"),
+             content = str_replace(content, "^<strong>", "<br><strong>"))
     
     topost_text <- desc$content %>% 
       toString() %>% 
@@ -120,6 +131,7 @@ glints_descform <- function(df, num) {
       str_replace_all(">,\\s", ">") %>% 
       str_replace_all("<br>-\\s", "<br>• ") %>% 
       str_replace_all("<br></strong>(<br>)?", "</strong><br><br>") %>% 
+      str_remove("^<br>") %>% 
       str_remove("<br>$")
     
     return(topost_text)

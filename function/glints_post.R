@@ -3,52 +3,58 @@
 #     glints_descform()
 #     glints_joburl()
 
-glints_post <- function(df, num = 1L) {
+glints_post <- function(df, num) {
   
-  # position
-  
-  jobtitle <- df$title[[num]]
-  
-  # company
-  
-  if(!is.null(df$company_name)){
+  for (n in num) {
+    # position
     
-    # using company name from table
-    jobhire <- df$company_name[[num]]
-    message("Menggunakan kolom 'company_name'")
+    jobtitle <- df$title[[n]]
     
-  } else if(!is.null(df$company_id)){
+    # company
     
-    # pull company data from glints
-    jobhire_baseurl <- "https://glints.com/api/companies/"
-    jobhire <- fromJSON(
-      paste0(jobhire_baseurl, df$company_id[[num]])
-    )$data$name 
-    message("Mencari data nama perusahaan dari web")
+    if(!is.null(df$company_name)){
+      
+      # using company name from table
+      jobhire <- df$company_name[[n]]
+      message("Menggunakan kolom 'company_name'")
+      
+    } else if(!is.null(df$company_id)){
+      
+      # pull company data from glints
+      jobhire_baseurl <- "https://glints.com/api/companies/"
+      jobhire <- fromJSON(
+        paste0(jobhire_baseurl, df$company_id[[n]])
+      )$data$name 
+      message("Mencari data nama perusahaan dari web")
+      
+    } else {
+      
+      stop("Gagal mendapatkan nama perusahaan")
+      
+    }
     
-  } else {
+    # desctiption
     
-    stop("Gagal mendapatkan nama perusahaan")
+    jobdesc <- glints_descform(df, n)
+    
+    # link
+    
+    joburl <- glints_joburl(df, n)
+    
+    # body
+    
+    jp <- paste(
+      paste0("<strong>", str_to_upper(jobtitle), "</strong>"),
+      paste0("at ", jobhire, "<br>"),
+      paste0(jobdesc, "<br>"),
+      joburl,
+      sep = "<br>"
+    )
+    
+    if (n == num[[1]]) jobpost <- jp
+    else jobpost <- append(jobpost, jp)
     
   }
-  
-  # desctiption
-  
-  jobdesc <- glints_descform(df, num)
-  
-  # link
-  
-  joburl <- glints_joburl(df, num)
-  
-  # body
-  
-  jobpost <- paste(
-    paste0("<strong>", str_to_upper(jobtitle), "</strong>"),
-    paste0("at ", jobhire, "<br>"),
-    paste0(jobdesc, "<br>"),
-    joburl,
-    sep = "<br>"
-  )
   
   return(jobpost)
   

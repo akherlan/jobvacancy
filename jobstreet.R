@@ -2,7 +2,7 @@
 # <https://www.jobstreet.co.id/>
 
 source("requirement.R")
-lapply(list.files("function", ".R", full.names = TRUE), source)
+for (f in list.files("function", ".R", full.names = TRUE)) source(f)
 
 # parameter
 url <- "https://xapi.supercharge-srp.co/job-search/graphql?country=id&isSmartSearch=true"
@@ -56,8 +56,6 @@ fragment LegacyCompat_SearchResult on SearchResult {
       name
     }
     jobTitle
-    jobUrl
-    jobTitleSlug
     description
     employmentTypes {
       name
@@ -91,7 +89,7 @@ fragment LegacyCompat_SearchResult on SearchResult {
   }
 }'
 
-# pulling data
+# pull data
 jobs <- GQL(
   query = query,
   .variables = var,
@@ -103,14 +101,35 @@ job <- jobs$jobs$jobs
 
 vacancy <- restruct_job(job)
 
-# arranging
-vacancy <- vacancy %>% 
-  select(
-    id, matches("job"), posted_at, matches("categories"),
-    description, matches("company"), matches("employ"),
-    matches("is_"), matches("location"), matches("country"), 
-    matches("salary"), matches("selling")
-  ) %>% 
-  filter(source_country_code == "id")
+# R programming requirement detection
+for (s in 1:nrow(vacancy)) {
+  p <- suppressMessages(jstreet_descform(vacancy, s))
+  d <- detect_skill_r(p)
+  if(d) {
+    message(sprintf("Data ke %s memenuhi kualifikasi", s))
+    if("r" %in% ls()){
+      r <- append(r, s)
+    } else {
+      r <- c()
+      r <- append(r, s)
+    }
+  } else {
+    message(sprintf("Melewati data ke %s", s))
+  }
+  Sys.sleep(1)
+}
 
-vacancy
+
+desc <- jstreet_descform(vacancy, r)
+vpost <- vacancy[r,]
+
+topost <- sapply(1:nrow(vpost), function(j) {
+  sprintf(
+    "<strong>%s</strong><br>at %s<br><br>%s<br><br>%s",
+    str_to_upper(vpost$job_title[j]),
+    vpost$company_meta_name[j],
+    desc[j],
+    vpost$job_url[j]
+  )
+})
+
