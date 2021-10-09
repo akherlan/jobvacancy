@@ -15,7 +15,7 @@ md <- sapply(topost, function(html) {
 
 bot <- Bot(token = bot_token("idnrbot"))
 
-temp <- md
+ab <- md
 
 while ("ab" %in% ls()) {
   
@@ -45,7 +45,7 @@ while ("ab" %in% ls()) {
   }
   
   # for stop looping
-  rm(temp)
+  rm(ab)
   
 }
 
