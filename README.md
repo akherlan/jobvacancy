@@ -27,10 +27,11 @@ Akhirnya, mari kita jadikan worker saja untuk alat semi-otomatis forward lowonga
 -   [x] Format postingan
 -   [x] Limit query
 -   [x] Filter kualifikasi/skill
--   [ ] Cek redundansi (postingan terambil ulang karena tanggal update)
--   [ ] Github Action
--   [ ] Google Apps Script integration
--   [ ] Hilangkan Telegram bot ???
+-   [ ] Filter by date
+-   [ ] Cek redundansi
+-   [x] Forward Telegram
+-   [ ] Github Action: cron automation
+-   [ ] Post feature enrichment: full/part-time? is remote? tag?
 
 ### Tautan
 

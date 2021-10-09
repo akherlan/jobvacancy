@@ -16,9 +16,15 @@ jstreet_descform <- function(df, num) {
       html_children() %>% 
       html_children()
     
-    # chech one more indent
-    if (sum(html_name(desc) == "ul") == 0) desc <- html_children(desc)
-    
+    # chech indent
+    if (sum(html_name(desc) == "div") == length(desc)) {
+      desc <- html_children(desc)
+    } else if (sum(html_name(desc) == "ul") > 0 | sum(html_name(desc) == "ol") > 0) {
+      desc <- desc
+    } else {
+      desc <- desc
+    }
+
     for (node in seq_along(desc)) {
       if (html_name(desc[node]) == "ul")
         d <- html_children(desc[node])
@@ -45,13 +51,13 @@ jstreet_descform <- function(df, num) {
              content = ifelse(str_detect(tag, "li"), 
                               str_replace(content, "^(.+)$", "• \\1"),
                               content),
-             content = ifelse(str_detect(tag, "div") & 
+             content = ifelse((tag == "div" | tag == "p") & 
                                 str_count(content, "\\w+\\s") < 4 &
                                 !str_detect(content, "^-\\s") &
                                 !str_detect(content, "•\\s"),
                               str_replace(content, "^(.+)$", "<strong>\\1</strong>"),
                               content),
-             content = ifelse(tag == "p" & nchar(content) < 50,
+             content = ifelse((tag == "div" | tag == "p") & nchar(content) < 50,
                               str_replace(content, "^(.+)$", "<strong>\\1</strong>"),
                               content),
              content = ifelse(tag == "strong",
