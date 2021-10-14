@@ -6,43 +6,43 @@
 glints_post <- function(df, num) {
   
   for (n in num) {
-    # position
     
+    # position
     jobtitle <- df$title[[n]]
     
     # company
-    
-    if(!is.null(df$company_name)){
+    # case 1: using company name from table
+    if (!is.null(df$company_name)) {
       
-      # using company name from table
       jobhire <- df$company_name[[n]]
-      message("Menggunakan kolom 'company_name'")
       
-    } else if(!is.null(df$company_id)){
+    }
+    
+    # case 2: pull company data from glints's web
+    else if (!is.null(df$company_id)) {
       
-      # pull company data from glints
       jobhire_baseurl <- "https://glints.com/api/companies/"
       jobhire <- fromJSON(
         paste0(jobhire_baseurl, df$company_id[[n]])
       )$data$name 
       message("Mencari data nama perusahaan dari web")
       
-    } else {
+    } 
+    
+    # case 3: unknown
+    else {
       
       stop("Gagal mendapatkan nama perusahaan")
       
     }
     
     # desctiption
-    
     jobdesc <- glints_descform(df, n)
     
     # link
-    
     joburl <- glints_joburl(df, n)
     
     # body
-    
     jp <- paste(
       paste0("<strong>", str_to_upper(jobtitle), "</strong>"),
       paste0("at ", jobhire, "<br>"),

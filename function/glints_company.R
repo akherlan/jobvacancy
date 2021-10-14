@@ -10,13 +10,8 @@ glints_company <- function(limit = 50L, cty = "ID") {
   )
   
   count <- company$count
-  message(
-    paste(
-      "Mengambil", limit, 
-      "dari", count, "rekaman data perusahaan",
-      sep = " "
-    )
-  )
+  
+  message(sprintf("Mengambil %s dari %s rekaman data perusahaan", limit, count))
   
   company <- company$data %>% 
     select(id, name, IndustryId, address, website, logo, tagline,

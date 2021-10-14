@@ -8,8 +8,7 @@ glints_skill <- function(catid){
     as_tibble() %>% 
     select(id, name, popularity, createdAt, updatedAt)
   skill$popularity <- as.integer(skill$popularity)
-  skill <- arrange(skill, desc(popularity)) %>% 
-    clean_names()
+  skill <- arrange(skill, desc(popularity)) %>% clean_names()
   return(skill)
   
 }

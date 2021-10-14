@@ -4,13 +4,12 @@ jstreet_descform <- function(df, num) {
   
   for (n in num) {
     
+    # get html
     url <- df$job_url[n]
-    
     f <- read_html(url)
     
+    # assume prefered description tag
     desc <- html_element(f, ".vDEj0_0")
-    
-    # assuming prefered description tag
     desc <- desc %>% 
       html_children() %>% 
       html_children() %>% 
@@ -71,7 +70,7 @@ jstreet_descform <- function(df, num) {
       filter(!((tag == "div" | tag == "p") & nchar(content) > 200))
     
     # clean format
-    jp <- desc$content %>% 
+    topost_text <- desc$content %>% 
       toString() %>% 
       str_replace_all(",\\s,\\s", "<br>") %>% 
       str_replace_all(">,\\s", ">") %>% 
@@ -81,11 +80,11 @@ jstreet_descform <- function(df, num) {
       str_remove("^<br>") %>% 
       str_remove("<br>$")
     
-    if (n == num[[1]]) topost_text <- jp
-    else topost_text <- append(topost_text, jp)
+    if (n == num[[1]]) txt <- topost_text
+    else txt <- append(txt, topost_text)
     
   }
   
-  return(topost_text)
+  return(txt)
   
 }

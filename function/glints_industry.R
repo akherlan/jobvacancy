@@ -9,9 +9,7 @@ glints_industry <- function() {
     message(sprintf("Data terlalu besar. Limit: %s", limit))
   } else if (industry$count > limit) {
     limit <- industry$count
-    industry <- fromJSON(
-      paste0("https://glints.com/api/industries?limit=", limit)
-    )
+    industry <- fromJSON(paste0("https://glints.com/api/industries?limit=", limit))
   }
   
   industry <- industry$data %>% 
@@ -19,6 +17,7 @@ glints_industry <- function() {
     as_tibble() %>% 
     arrange(name) %>% 
     clean_names()
+  
   return(industry)
   
 }

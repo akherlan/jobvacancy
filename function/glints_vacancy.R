@@ -1,13 +1,16 @@
 # Get vacancy
 
-glints_vacancy <- function(limit = 50L, cty = "ID", type = "FULL_TIME") {
+glints_vacancy <- function(limit = 30L, 
+                           catid = c(1, 2, 5, 7, 10), 
+                           cty = "ID", 
+                           type = "FULL_TIME") {
   
   base_url <- "https://glints.com/api/jobs"
   
+  # parameters
   countryCode   <- cty
-  jobTypes      <- type
-  # INTERNSHIP, FULL_TIME, PART_TIME, PROJECT_BASED
-  JobCategoryId <- "{%22$in%22:[1,2,5,7,10]}"
+  jobTypes      <- type # INTERNSHIP, FULL_TIME, PART_TIME, PROJECT_BASED
+  JobCategoryId <- paste0("{%22$in%22:[", toString(catid), "]}")
   # when looking for vacancies with keyword "data analyst" manually on the web
   # five categories below are appear in the filter column
   # 1  = software enggineering
@@ -37,12 +40,12 @@ glints_vacancy <- function(limit = 50L, cty = "ID", type = "FULL_TIME") {
   
   vacancy <- fromJSON(query)
   
-  if(vacancy$count > 0){
+  if(vacancy$count > 0) {
     message(
       paste("Mengambil", limit, "dari", vacancy$count, "data lowongan kerja", 
             sep = " ")
     )
-  } else if (vacancy$count == 0){
+  } else if (vacancy$count == 0) {
     # if there is no data pulled, stop the process
     stop("Tidak ada data lowongan tersedia")
   } else {
