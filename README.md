@@ -9,7 +9,7 @@ Untuk kemudahan supaya gak bolak-balik cek situs web lowongan kerja.
 -   Tarik data dari web penyedia info lowongan kerja seperti:
     -   Glints
     -   Jobstreet
-    -   LinkedIn
+    -   Indeed
 -   Menyortir lowongan kerja
 -   Memformat konten postingan loker: judul, deskripsi, tautan
 -   Meneruskan konten loker ke personal chat untuk supervisi konten
@@ -27,10 +27,10 @@ Akhirnya, mari kita jadikan worker saja untuk alat semi-otomatis forward lowonga
 -   [x] Format postingan
 -   [x] Limit query
 -   [x] Filter kualifikasi/skill
--   [ ] Filter by date
--   [ ] Cek redundansi
+-   [x] Simpan hasil, cek apakah dobel
 -   [x] Forward Telegram
--   [ ] Github Action: cron automation
+-   [ ] Github Action: cron/automation
+-   [ ] Buat proses mining tetap menyimpan data walau gagal di tengah jalan
 -   [ ] Post feature enrichment: full/part-time? is remote? tag?
 
 ### Tautan

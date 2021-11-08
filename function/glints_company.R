@@ -1,4 +1,7 @@
-# Get company detail
+#' Get company detail
+#' 
+#' @param limit integer of amount of limit company details to gather.
+#' @param cty character of country code. Default "ID".
 
 glints_company <- function(limit = 50L, cty = "ID") {
   

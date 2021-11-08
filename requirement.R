@@ -1,12 +1,16 @@
+# Libraries required
 lapply(
   c(
     "dplyr",
-    "httr",
+    "httr",         # for GQL function and other libraries dependency
     "janitor",
-    "jsonlite",
+    "jsonlite",     # for GQL function
     "rvest",
     "stringr",
-    "telegram.bot",
+    "telegram.bot", # Telegram communication
     "tidyr"
   ), function(x) if(!require(x, character.only = TRUE)) install.packages(x)
 )
+
+# Generic functions
+for (f in list.files("function", ".R", full.names = TRUE)) source(f)

@@ -1,3 +1,9 @@
+#' Description formatting for JobStreet
+#' 
+#' @description Description scraping from JobStreet job URL.
+#' @param df vacancy data.frame generated from jstreet function.
+#' @param num numeric vector of rows.
+
 jstreet_descform <- function(df, num) {
   
   message("Mengambil detail deskripsi dari web")

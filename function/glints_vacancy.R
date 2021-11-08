@@ -1,4 +1,9 @@
-# Get vacancy
+#' Get vacancy
+#' 
+#' @param limit integer of amount of limit job items to gather.
+#' @param catid numeric vector of job's category.
+#' @param cty character of country code. Default "ID".
+#' @param type job's type category: "FULL_TIME" as default.
 
 glints_vacancy <- function(limit = 30L, 
                            catid = c(1, 2, 5, 7, 10), 

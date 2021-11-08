@@ -1,4 +1,6 @@
-# Get skill by job category id
+#' Get skill by job category id
+#' 
+#' @param catid numeric vector of job's category.
 
 glints_skill <- function(catid){
   

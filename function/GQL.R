@@ -1,5 +1,4 @@
-require(httr)
-require(jsonlite)
+#' GraphQL
 
 # <https://gist.github.com/rentrop/83cb1d8fc8593726a808032e55314019>
 # url <- "https://glints.com/api/graphql"

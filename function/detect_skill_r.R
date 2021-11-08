@@ -1,4 +1,6 @@
-# Detect R skill requirement in text description
+#' Detect R skill requirement in text description
+#' 
+#' @param text Text character to detect.
 
 detect_skill_r <- function(text) {
   text <- str_to_lower(text)

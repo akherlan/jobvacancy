@@ -1,4 +1,6 @@
-# Restructuring list from GQL result
+#' Restructuring job list
+#' 
+#' @param jobls List of job result from GQL function
 
 restruct_job <- function(jobls){
   

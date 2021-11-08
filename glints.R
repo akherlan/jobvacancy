@@ -2,13 +2,12 @@
 # <https://glints.com/id/>
 
 source("requirement.R")
-for (f in list.files("function", ".R", full.names = TRUE)) source(f)
 
 # parameter
 url <- "https://glints.com/api/graphql"
 opnam <- "searchJobs"
 jobid <- 2
-limit <- 50
+limit <- 30
 var <- sprintf(
   '{
     "data": {
@@ -99,6 +98,78 @@ for (s in 1:nrow(vacancy)) {
   Sys.sleep(1)
 }
 
+# check duplication
+posted_job <- read.csv("output/posted.csv")
+# sapply(posted_job, class)
+posting_job <- vacancy[r, c("id", "title", "source")]
+posting_job <- rename(posting_job, "job_title" = "title")
+posting_job <- filter(posting_job, 
+                      is.na(match(posting_job$id, posted_job$id)) == TRUE)
 
-topost <- glints_post(vacancy, r)
+# post and save for tracking
+if (nrow(posting_job) == 0) {
+  message("Tidak ada postingan baru.")
+} else {
+  
+  # save data
+  posting_job <- data.frame(posting_job, get_time = Sys.time())
+  write.table(x = posting_job,
+              file = "output/posted.csv", 
+              sep = ",", 
+              append = TRUE, 
+              row.names = FALSE, 
+              col.names = FALSE)
+  
+  # filter data
+  vacancy <- filter(vacancy, vacancy$id %in% posting_job$id)
+  
+  # generate post
+  topost <- glints_post(vacancy, 1:nrow(vacancy))
+  
+  # send post
+  md <- sapply(topost, function(html) {
+    html %>% 
+      str_replace_all("<br>", "\n") %>%
+      str_replace_all("<strong>", "*") %>% 
+      str_replace_all("</strong>", "*") %>% 
+      str_replace_all("\\*\\*", "*")
+  })
+  # bot
+  bot <- Bot(token = bot_token("idnrbot"))
+  ab <- md
+  message("Sending message to Telegram")
+  
+  while ("ab" %in% ls()) {
+    
+    for (post in seq_along(md)) {
+      tryCatch(
+        {
+          bot$sendMessage(
+            chat_id = as.integer(Sys.getenv("ADMIN_ID")),
+            text = md[[post]],
+            parse_mode = "Markdown"
+          )
+          Sys.sleep(2)
+        }, 
+        error = function(e){
+          cat("ERROR in", post, ":", conditionMessage(e), "\n")
+        }
+      )
+    }
+    
+    # for stop looping
+    rm(ab)
+    
+    # summary
+    bot$sendMessage(
+      chat_id = as.integer(Sys.getenv("ADMIN_ID")),
+      text = sprintf(
+        "*Ikhtisar*\nDijalankan pada %s waktu %s. Jumlah %s postingan.",
+        Sys.time(), Sys.timezone(), length(md)
+      ),
+      parse_mode = "Markdown"
+    )
+    
+  }
+}
 

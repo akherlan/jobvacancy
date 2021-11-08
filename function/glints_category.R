@@ -1,4 +1,4 @@
-# Get job category 
+#' Get job category 
 
 glints_category <- function() {
   
