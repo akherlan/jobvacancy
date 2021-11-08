@@ -4,23 +4,24 @@
 
 Untuk kemudahan supaya gak bolak-balik cek situs web lowongan kerja.
 
-### Rencana alur kerja
+Data bersumber dari:
 
--   Tarik data dari web penyedia info lowongan kerja seperti:
-    -   Glints
-    -   Jobstreet
-    -   Indeed
--   Menyortir lowongan kerja
--   Memformat konten postingan loker: judul, deskripsi, tautan
--   Meneruskan konten loker ke personal chat untuk supervisi konten
+- Glints
+- Jobstreet
+- Indeed (coming soon)
 
-Masih terbuka berbagai kemungkinan. Awalnya mau disimpan ke hosting-an dan biarkan ia bekerja 24/7 yang nantinya mungkin bisa dikembangkan fungsinya dan ditanam ke grup juga.
+### Alur kerja
 
-Tapi, mari simpan itu untuk rencana jangka panjang saja dengan fungsi yang diperkaya. Sepertinya gak perlu-perlu amat punya fitur auto-forward pesan tertentu dari [grup](https://t.me/gnurindonesia/) ke [channel](https://t.me/gnuridjobs/). Untuk saat ini.
+- Menyortir lowongan kerja
+- Memformat konten postingan loker: judul, deskripsi, tautan
+- Mengirim konten loker ke personal chat (admin) untuk supervisi konten
+- Meneruskan postingan ke Telegram channel
 
-Mungkin kalau nanti ada kulgram, fitur itu akan cocok dan bisa sangat bermanfaat.
+### Motivasi
 
-Akhirnya, mari kita jadikan worker saja untuk alat semi-otomatis forward lowongan kerja ke chat personal. Di sini tugas Admin untuk supervisi tetap dibutuhkan kalau mau forward ke channel. Manusia selalu lebih baik.
+Awalnya mau dibuat sebuah bot yang bekerja 24/7 untuk forward pesan lowongan kerja dari [grup](https://t.me/gnurindonesia/) untuk dipisahkan ke channel khusus. Tapi akhirnya rencana ini disimpan dulu untuk rencana jangka panjang saja dengan fungsi yang mungkin bisa diperkaya, alias tidak hanya untuk menyimpan lowongan kerja di Channel saja. Karena sepertinya grup belum perlu-perlu amat punya fitur auto-forward pesan ke [channel](https://t.me/gnuridjobs/), setidaknya untuk saat ini. Mungkin kalau nanti ada kulgram fitur itu akan cocok dan bisa sangat bermanfaat.
+
+Mari kita jadikan worker saja untuk alat semi-otomatis forward lowongan kerja ke channel dari berbagai sumber. Di sini tugas Admin untuk supervisi pesan tetap dibutuhkan. Manusia memang selalu lebih baik.
 
 ### Progres
 
@@ -30,7 +31,7 @@ Akhirnya, mari kita jadikan worker saja untuk alat semi-otomatis forward lowonga
 -   [x] Simpan hasil, cek apakah dobel
 -   [x] Forward Telegram
 -   [ ] Github Action: cron/automation
--   [ ] Buat proses mining tetap menyimpan data walau gagal di tengah jalan
+-   [ ] Buat proses mining tetap memproses hasil walau gagal di tengah jalan
 -   [ ] Post feature enrichment: full/part-time? is remote? tag?
 
 ### Tautan
