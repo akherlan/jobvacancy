@@ -60,6 +60,8 @@ restruct_job <- function(jobls){
       ) %>% 
       mutate(source = "glints")
     
+    vacancy <- rename(vacancy, "job_title" = "title")
+    
   }
   
   return(vacancy)

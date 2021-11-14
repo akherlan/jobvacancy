@@ -19,9 +19,9 @@ Data bersumber dari:
 
 ### Motivasi
 
-Awalnya mau dibuat sebuah bot yang bekerja 24/7 untuk forward pesan lowongan kerja dari [grup](https://t.me/gnurindonesia/) untuk dipisahkan ke channel khusus. Tapi akhirnya rencana ini disimpan dulu untuk rencana jangka panjang saja dengan fungsi yang mungkin bisa diperkaya, alias tidak hanya untuk menyimpan lowongan kerja di Channel saja. Karena sepertinya grup belum perlu-perlu amat punya fitur auto-forward pesan ke [channel](https://t.me/gnuridjobs/), setidaknya untuk saat ini. Mungkin kalau nanti ada kulgram fitur itu akan cocok dan bisa sangat bermanfaat.
+Awalnya mau dibuat sebuah bot yang bekerja 24/7 untuk forward pesan lowongan kerja dari [Telegram group](https://t.me/gnurindonesia/) agar terpisah ke [Telegram channel](https://t.me/gnuridjobs/) khusus. Tapi akhirnya rencana ini disimpan dulu untuk rencana jangka panjang saja dengan fungsi yang mungkin bisa diperkaya, alias tidak hanya untuk menyimpan lowongan kerja di Channel saja. Karena sepertinya grup belum perlu-perlu amat punya fitur auto-forward pesan ke channel, setidaknya untuk saat ini. Mungkin kalau nanti ada kulgram fitur itu akan cocok dan bisa sangat bermanfaat.
 
-Mari kita jadikan worker saja untuk alat semi-otomatis forward lowongan kerja ke channel dari berbagai sumber. Di sini tugas Admin untuk supervisi pesan tetap dibutuhkan. Manusia memang selalu lebih baik.
+Mari kita jadikan bot ini sebagai worker saja untuk alat semi-otomatis forward lowongan kerja ke channel dari berbagai sumber. Di sini tugas Admin untuk supervisi pesan tetap dibutuhkan. Manusia memang selalu lebih baik.
 
 ### Progres
 
@@ -31,7 +31,8 @@ Mari kita jadikan worker saja untuk alat semi-otomatis forward lowongan kerja ke
 -   [x] Simpan hasil, cek apakah dobel
 -   [x] Forward Telegram
 -   [ ] Github Action: cron/automation
--   [ ] Buat proses mining tetap memproses hasil walau gagal di tengah jalan
+-   [ ] Buat proses mining tetap melanjutkan step walau gagal di tengah jalan
+-   [ ] Gagal mining maka data scraped/posted jangan dulu disimpan
 -   [ ] Post feature enrichment: full/part-time? is remote? tag?
 
 ### Tautan

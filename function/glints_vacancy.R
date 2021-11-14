@@ -18,7 +18,7 @@ glints_vacancy <- function(limit = 30L,
   JobCategoryId <- paste0("{%22$in%22:[", toString(catid), "]}")
   # when looking for vacancies with keyword "data analyst" manually on the web
   # five categories below are appear in the filter column
-  # 1  = software enggineering
+  # 1  = software engginering
   # 2  = data science
   # 5  = marketing
   # 7  = bussiness development / sales
