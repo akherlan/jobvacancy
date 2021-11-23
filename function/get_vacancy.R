@@ -3,7 +3,7 @@
 get_vacancy <- function(src = "jobstreet", 
                         lim = NULL, 
                         ...,
-                        post_mode = FALSE) {
+                        post_mode = TRUE) {
   
   if (!(src %in% c("glints", "indeed", "jobstreet"))) {
     message('Source not in list c("glints", "indeed", "jobstreet")')
@@ -25,7 +25,7 @@ get_vacancy <- function(src = "jobstreet",
     message("Unknown source")
   }
   
-  if (post_mode) {
+  if (!post_mode) {
     return(vacancy)
   } else {
     

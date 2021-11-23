@@ -1,5 +1,7 @@
-source("requirement.R")
+message(format(Sys.time(), "%A, %d %B %Y pukul %X"))
+message("Menyiapkan mesin...")
+suppressPackageStartupMessages(source("requirement.R"))
+message("#### Glints ####")
 get_vacancy("glints")
+message("#### Jobstreet ####")
 get_vacancy("jobstreet")
-
-
