@@ -11,8 +11,11 @@ jstreet_descform <- function(df, num) {
   for (n in num) {
     
     # get html
-    url <- df$job_url[n]
+    if (is.null(df$job_url[n])) url <- get_joburl(id = df$id[n])
+    else url <- df$job_url[n]
+    url <- url(url, "rb")
     f <- read_html(url)
+    close(url)
     
     # assume prefered description tag
     desc <- html_element(f, ".vDEj0_0")

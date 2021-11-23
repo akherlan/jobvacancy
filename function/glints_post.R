@@ -1,7 +1,9 @@
-# Post formatting
+#' Post formatting
+#'
+ 
 # using function: 
 #     glints_descform()
-#     glints_joburl()
+#     get_joburl()
 
 glints_post <- function(df, num) {
   
@@ -40,7 +42,7 @@ glints_post <- function(df, num) {
     jobdesc <- glints_descform(df, n)
     
     # link
-    joburl <- glints_joburl(df, n)
+    joburl <- get_joburl(df, n)
     
     # body
     jp <- paste(

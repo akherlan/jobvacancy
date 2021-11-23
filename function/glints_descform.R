@@ -1,7 +1,7 @@
 #' Description formatting for Glints
 #' 
 #' @description Using descriptionRaw column as provided by API or alternatively 
-#'    using glints_joburl function for scraping.
+#'    using get_joburl function for scraping.
 #' @param df vacancy data.frame generated from glints function.
 #' @param num numeric vector of rows.
 
@@ -108,7 +108,7 @@ glints_descform <- function(df, num) {
     for (n in num) {
       
       # get html page
-      url <- glints_joburl(df, n)
+      url <- get_joburl(df = df, num = n)
       f <- read_html(url)
       desc <- html_element(f, ".DraftEditor-editorContainer")
       
