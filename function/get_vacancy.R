@@ -66,7 +66,7 @@ get_vacancy <- function(src = "jobstreet",
                   col.names = FALSE)
       
       # check if there are duplicate post
-      if (exists("r") & length(r) != 0) {
+      if (exists("r")) {
         posted_job <- read.csv("output/posted.csv")
         posting_job <- vacancy[r, c("id", "job_title", "source")]
         posting_job <- filter(posting_job, 
