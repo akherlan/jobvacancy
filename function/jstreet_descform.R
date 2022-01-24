@@ -18,7 +18,7 @@ jstreet_descform <- function(df, num) {
     close(url)
     
     # assume prefered description tag
-    desc <- html_element(f, ".vDEj0_0")
+    desc <- html_element(f, ".YCeva_0") # sebelumnya .vDEj0_0
     desc <- desc %>% 
       html_children() %>% 
       html_children() %>% 
