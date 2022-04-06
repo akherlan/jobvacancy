@@ -12,6 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: r-lib/actions/setup-r@master
-      - name: Run script
+      - name: Run crawler and forwarder script
         run: ./run
+      - name: Commit results to main branch
+        run: |
+          git config --global user.email "akherlan@users.noreply.github.com"
+          git config --global user.name "Andi"
+          git commit -am "New update" || echo "No changes to commit"
+          git push origin || echo "No changes to commit"
 
