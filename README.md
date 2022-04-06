@@ -30,8 +30,8 @@ Mari kita jadikan bot ini sebagai worker saja untuk alat semi-otomatis forward l
 -   [x] Filter kualifikasi/skill
 -   [x] Simpan hasil, cek apakah dobel
 -   [x] Forward Telegram
--   [ ] Github Action: cron/automation
--   [ ] Buat proses mining tetap melanjutkan step walau gagal di tengah jalan
+-   [x] Github Action: cron/automation
+-   [x] Buat proses mining tetap melanjutkan step walau gagal di tengah jalan
 -   [ ] Gagal mining maka data scraped/posted jangan dulu disimpan
 -   [ ] Post feature enrichment: full/part-time? is remote? tag?
 
