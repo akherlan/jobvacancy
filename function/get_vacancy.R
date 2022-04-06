@@ -1,28 +1,25 @@
 #' Get vacancy data
 
-get_vacancy <- function(src = "jobstreet", 
-                        lim = NULL, 
+get_vacancy <- function(src,
                         ...,
                         post_mode = TRUE) {
-  
+  if (missing(src)) src <- "jobstreet"
   if (!(src %in% c("glints", "indeed", "jobstreet"))) {
-    message('Source not in list c("glints", "indeed", "jobstreet")')
+    stop('Argument src not in c("glints", "indeed", "jobstreet")')
   }
   
   else if (src == "glints") {
-    source("glints.R")
+    message("From Glints...")
+    vacancy <- get_glints()
   }
   
   else if (src == "indeed") {
-    message("Not ready yet")
+    stop("Cooming soon!")
   }
   
   else if (src == "jobstreet") {
-    source("jobstreet.R")
-  }
-  
-  else {
-    message("Unknown source")
+    message("From Jobstreet...")
+    vacancy <- get_jobstreet()
   }
   
   if (!post_mode) {
@@ -34,9 +31,8 @@ get_vacancy <- function(src = "jobstreet",
     vacancy <- filter(vacancy, is.na(match(vacancy$id, scraped$id)) == TRUE)
     if (nrow(vacancy) == 0) {
       message("Tidak ada postingan baru.")
-      # if there are new post
+    # if there are new post
     } else {
-      
       # detect R programming requirement
       for (s in 1:nrow(vacancy)) {
         if (src == "jobstreet") p <- suppressMessages(jstreet_descform(vacancy, s))
@@ -110,7 +106,8 @@ get_vacancy <- function(src = "jobstreet",
             str_replace_all("\\*\\*", "*")
         })
         # bot: sending message script
-        bot <- Bot(token = bot_token("idnrbot"))
+        bot <- Bot(token = bot_token(Sys.getenv("TELEGRAM_BOT")))
+        # bot <- Bot(token = bot_token("idnrbot"))
         ab <- md
         message("Sending message to Telegram")
         while ("ab" %in% ls()) {
@@ -165,6 +162,5 @@ get_vacancy <- function(src = "jobstreet",
     
   }
   # end if mode
-  
   
 }

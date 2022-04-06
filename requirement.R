@@ -9,8 +9,9 @@ lapply(
     "stringr",
     "telegram.bot", # Telegram communication
     "tidyr"
-  ), function(x) if(!require(x, character.only = TRUE)) install.packages(x)
+  ), function(x) if(!require(x, character.only = TRUE)) install.packages(x, dependencies = TRUE)
 )
 
 # Generic functions
 for (f in list.files("function", ".R", full.names = TRUE)) source(f)
+rm(f)

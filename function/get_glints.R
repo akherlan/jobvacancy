@@ -1,13 +1,14 @@
-# Glints
+#' Glints
 # <https://glints.com/id/>
 
-# parameter
-url <- "https://glints.com/api/graphql"
-opnam <- "searchJobs"
-jobid <- 2
-limit <- 30
-var <- sprintf(
-  '{
+get_glints <- function(jobid, limit) {
+  # parameter
+  url <- "https://glints.com/api/graphql"
+  opnam <- "searchJobs"
+  if (missing(jobid)) { jobid <- 2 }
+  if (missing(limit)) { limit <- 30 }
+  var <- sprintf(
+    '{
     "data": {
       "JobCategoryId": %s,
       "CountryCode": "ID",
@@ -18,10 +19,10 @@ var <- sprintf(
       "variant": "A"
     }
   }', jobid, limit
-)
-
-query <- 
-'query searchJobs($data: JobSearchConditionInput!) {
+  )
+  
+  query <- 
+    'query searchJobs($data: JobSearchConditionInput!) {
   searchJobs(data: $data) {
     jobsInPage {
       id
@@ -65,16 +66,15 @@ query <-
     totalJobs
   }
 }'
-
-# pull data
-jobs <- GQL(
-  query = query,
-  .variables = var,
-  .operationName = opnam,
-  .url = url
-)
-
-job <- jobs$searchJobs$jobsInPage
-
-vacancy <- restruct_job(job)
-
+  
+  # pull data
+  jobs <- GQL(
+    query = query,
+    .variables = var,
+    .operationName = opnam,
+    .url = url
+  )
+  job <- jobs$searchJobs$jobsInPage
+  vacancy <- restruct_job(job)
+  return(vacancy)
+}
