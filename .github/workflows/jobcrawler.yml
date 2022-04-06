@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TELEGRAM_BOT: ${{ secrets.TELEGRAM_BOT }}
-      ADMIN_ID: ${{ ADMIN_ID }}
+      ADMIN_ID: ${{ secrets.ADMIN_ID }}
     steps:
       - uses: actions/checkout@v2
       - uses: r-lib/actions/setup-r@master
