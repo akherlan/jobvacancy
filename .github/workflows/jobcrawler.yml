@@ -1,0 +1,17 @@
+name: jobcrawler
+on:
+  schedule:
+    - cron: '0 7/12 * * *' # 2 times a day at 7 AM/PM
+
+jobs:
+  job-crawler:
+    runs-on: ubuntu-latest
+    env:
+      TELEGRAM_BOT: ${{ secrets.TELEGRAM_BOT }}
+      ADMIN_ID: ${{ ADMIN_ID }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: r-lib/actions/setup-r@master
+      - name: Run script
+        run: ./run
+
