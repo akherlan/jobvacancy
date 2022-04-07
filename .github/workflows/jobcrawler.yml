@@ -1,7 +1,7 @@
 name: jobcrawler
 on:
   schedule:
-    - cron: '0 7/12 * * *' # 2 times a day at 7 AM/PM
+    - cron: '0 0/12 * * *' # 2 times a day at 7 AM/PM UTC+7
 
 jobs:
   job-crawler:
@@ -12,6 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: r-lib/actions/setup-r@master
+      - name: Install dependency
+        run: sudo apt install libcurl4-openssl-dev
       - name: Run crawler and forwarder script
         run: Rscript postman.R
       - name: Commit results to main branch
