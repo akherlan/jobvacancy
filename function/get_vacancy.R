@@ -106,7 +106,7 @@ get_vacancy <- function(src,
             str_replace_all("\\*\\*", "*")
         })
         # bot: sending message script
-        bot <- Bot(token = bot_token("idnrbot"))
+        bot <- Bot(token = bot_token("IDNRBOT"))
         ab <- md
         message("Sending message to Telegram")
         while ("ab" %in% ls()) {
