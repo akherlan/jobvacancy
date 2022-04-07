@@ -46,3 +46,4 @@ po/*~
 
 # my file
 secret
+error_log/

@@ -14,6 +14,8 @@ jobs:
       - uses: r-lib/actions/setup-r@master
       - name: Install dependency
         run: sudo apt install libcurl4-openssl-dev
+      - name: Install R packages
+        run: R -e 'install.packages(c("dplyr", "httr", "janitor", "jsonlite", "rvest", "stringr", "telegram.bot", "tidyr"), dependencies = TRUE)'
       - name: Run crawler and forwarder script
         run: Rscript postman.R
       - name: Commit results to main branch
