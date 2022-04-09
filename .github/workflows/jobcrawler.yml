@@ -7,7 +7,7 @@ jobs:
   job-crawler:
     runs-on: ubuntu-latest
     env:
-      TELEGRAM_BOT: ${{ secrets.R_TELEGRAM_BOT_IDNRBOT }}
+      R_TELEGRAM_BOT_IDNRBOT: ${{ secrets.R_TELEGRAM_BOT_IDNRBOT }}
       ADMIN_ID: ${{ secrets.ADMIN_ID }}
     steps:
       - uses: actions/checkout@v2
