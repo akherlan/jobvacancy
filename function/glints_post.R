@@ -10,7 +10,8 @@ glints_post <- function(df, num) {
   for (n in num) {
     
     # position
-    jobtitle <- df$title[[n]]
+    # jobtitle <- df$title[[n]]
+    jobtitle <- df$job_title[[n]]
     
     # company
     # case 1: using company name from table

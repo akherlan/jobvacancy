@@ -1,4 +1,4 @@
-message(format(Sys.time(), "%A, %d %B %Y pukul %X"))
+message(paste(format(Sys.time(), "%A, %d %B %Y pukul %X"), Sys.timezone(), sep = " "))
 message("Starting the machine...")
 suppressPackageStartupMessages(source("requirement.R"))
 get_vacancy("glints")
