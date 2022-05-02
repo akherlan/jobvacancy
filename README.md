@@ -2,40 +2,32 @@
 
 **For Telegram Channel and Personal Chat Feeder**
 
-Untuk kemudahan supaya gak bolak-balik cek situs web lowongan kerja.
+For convenience then not go back and forth check job vacancies websites.
 
-Data bersumber dari:
+Data source:
 
 - Glints
 - Jobstreet
 - Indeed (coming soon)
 
-### Alur kerja
+### Work flow
 
-- Menyortir lowongan kerja
-- Memformat konten postingan loker: judul, deskripsi, tautan
-- Mengirim konten loker ke personal chat (admin) untuk supervisi konten
-- Meneruskan postingan ke Telegram channel
+- Sorting the job vacancies
+- Formatting content of post: title, description, URL
+- Sending content to personal chat (admin) for supervision
+- Forwarding post to a Telegram channel
 
-### Motivasi
+### Motivation
 
-Awalnya mau dibuat sebuah bot yang bekerja 24/7 untuk forward pesan lowongan kerja dari [Telegram group](https://t.me/gnurindonesia/) agar terpisah ke [Telegram channel](https://t.me/gnuridjobs/) khusus. Tapi akhirnya rencana ini disimpan dulu untuk rencana jangka panjang saja dengan fungsi yang mungkin bisa diperkaya, alias tidak hanya untuk menyimpan lowongan kerja di Channel saja. Karena sepertinya grup belum perlu-perlu amat punya fitur auto-forward pesan ke channel, setidaknya untuk saat ini. Mungkin kalau nanti ada kulgram fitur itu akan cocok dan bisa sangat bermanfaat.
+Initially, I wanted to make a bot that works 24/7 to forward job vacancies from [Telegram group](https://t.me/gnurindonesia/) to separate them to [Telegram channel](https://t.me/gnuridjobs/ ) special. But in the end, this plan was saved for long-term plans only with functions that might be enriched, a.k.a not only for storing job vacancies on the Channel. However, it seems that groups don't really need to have auto-forward feature messages to channels, at least for now. Maybe if later there is a feature short course in Telegram (kuliah Telegram) that is suitable and can be very useful.
 
-Mari kita jadikan bot ini sebagai worker saja untuk alat semi-otomatis forward lowongan kerja ke channel dari berbagai sumber. Di sini tugas Admin untuk supervisi pesan tetap dibutuhkan. Manusia memang selalu lebih baik.
+Let's take this bot as a worker only for a semi-automatic tool forward to channels from various sources. The task of Admin to keep an eye on messages is still needed. Humans are always better.
 
-### Progres
+### To Do
 
--   [x] Format postingan
--   [x] Limit query
--   [x] Filter kualifikasi/skill
--   [x] Simpan hasil, cek apakah dobel
--   [x] Forward Telegram
--   [x] Github Action: cron/automation
--   [x] Buat proses mining tetap melanjutkan step walau gagal di tengah jalan
--   [ ] Gagal mining maka data scraped/posted jangan dulu disimpan
 -   [ ] Post feature enrichment: full/part-time? is remote? tag?
 
-### Tautan
+### Link
 
 Telegram group: [Komunitas R Indonesia](https://t.me/GNURIndonesia)  
 Telegram channel lowongan R: [\@gnuridjobs](https://t.me/gnuridjobs)   
