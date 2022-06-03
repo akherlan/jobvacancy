@@ -1,5 +1,5 @@
-message(paste(format(Sys.time(), "%A, %d %B %Y pukul %X"), Sys.timezone(), sep = " "))
+message(paste(format(Sys.time(), "%A, %d %B %Y at %X"), Sys.timezone(), sep = " "))
 message("Starting the machine...")
 suppressPackageStartupMessages(source("requirement.R"))
-get_vacancy("glints")
-get_vacancy("jobstreet")
+get_vacancy2("glints")
+get_vacancy2("jobstreet")

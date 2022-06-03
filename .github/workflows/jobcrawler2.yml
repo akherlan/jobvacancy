@@ -1,0 +1,40 @@
+name: jobcrawler-v2
+on:
+  schedule:
+    - cron: '0 0/12 * * *' # 2 times a day at 7 AM/PM UTC+7
+  workflow_dispatch:
+
+jobs:
+  crawler:
+    runs-on: ubuntu-latest
+    env:
+      R_TELEGRAM_BOT_IDNRBOT: ${{ secrets.R_TELEGRAM_BOT_IDNRBOT }}
+      ADMIN_ID: ${{ secrets.ADMIN_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      - name: Setup R
+        uses: r-lib/actions/setup-r@master
+        
+      - name: Install dependency
+        run: sudo apt install libcurl4-openssl-dev
+        
+      - name: Install R packages
+        run: | 
+          R -e 'install.packages(c("dplyr", "httr", "janitor", "jsonlite", "rvest", "stringr", "telegram.bot", "tidyr", "remotes"), dependencies = TRUE)'
+          R -e 'remotes::install_github("akherlan/unmplymnt")'
+          
+      - name: Run crawler and forwarder script
+        run: Rscript postman.R
+        
+      - name: Set today
+        id: set_today
+        run: echo "::set-output name=today::$(date +'%a, %F at %H:%M %Z')"  
+        
+      - name: Commit results
+        run: |
+          git config --global user.email "akherlan@users.noreply.github.com"
+          git config --global user.name "Andi"
+          git commit -am "Updated: ${{ steps.set_today.outputs.today }}" || echo "No changes to commit"
+          git push origin || echo "No changes to commit"

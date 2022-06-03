@@ -7,8 +7,10 @@ lapply(
     "jsonlite",     # for GQL function
     "rvest",
     "stringr",
+    "purrr",
     "telegram.bot", # Telegram communication
-    "tidyr"
+    "tidyr",
+    "unmplymnt"
   ), function(x) if(!require(x, character.only = TRUE)) install.packages(x, dependencies = TRUE)
 )
 

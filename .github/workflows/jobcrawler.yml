@@ -1,7 +1,6 @@
 name: jobcrawler
 on:
-  schedule:
-    - cron: '0 0/12 * * *' # 2 times a day at 7 AM/PM UTC+7
+  workflow_dispatch:
 
 jobs:
   job-crawler:
