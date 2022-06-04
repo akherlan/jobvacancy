@@ -10,6 +10,8 @@ jobs:
     env:
       R_TELEGRAM_BOT_IDNRBOT: ${{ secrets.R_TELEGRAM_BOT_IDNRBOT }}
       ADMIN_ID: ${{ secrets.ADMIN_ID }}
+      GITHUB_PAT: $ {{ secrets.GHPAT }}
+      
     steps:
       - name: Checkout
         uses: actions/checkout@v2
