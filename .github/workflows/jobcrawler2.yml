@@ -1,7 +1,8 @@
 name: jobcrawler-v2
 on:
   schedule:
-    - cron: '0 0/12 * * *' # 2 times a day at 7 AM/PM UTC+7
+    - cron: '0 23 * * *' # at 6 AM UTC+7
+    - cron: '0 11 * * *' # at 6 PM UTC+7
   workflow_dispatch:
 
 jobs:
@@ -10,6 +11,7 @@ jobs:
     env:
       R_TELEGRAM_BOT_IDNRBOT: ${{ secrets.R_TELEGRAM_BOT_IDNRBOT }}
       ADMIN_ID: ${{ secrets.ADMIN_ID }}
+      AUDIT_ID: ${{ secrets.AUDIT_ID }}
       GITHUB_PAT: ${{ secrets.GHPAT }}
       
     steps:
@@ -28,7 +30,9 @@ jobs:
           R -e 'remotes::install_github("akherlan/unmplymnt")'
           
       - name: Run crawler and forwarder script
-        run: Rscript postman.R
+        run: | 
+          Rscript postman.R
+          Rscript audit.R
         
       - name: Set today
         id: set_today
