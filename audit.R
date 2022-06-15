@@ -49,10 +49,10 @@ j_title <- map(exclude_title, ~{ grepl(.x, tolower(j$job_title)) })
 j_title <- data.frame(j_title[[1]], j_title[[2]])
 j_title[[(ncol(j_title) + 1)]] <- as.logical(rowSums(j_title))
 j_title <- !j_title[[ncol(j_title)]]
+j <- j[j_title,]
 
 cat("Reading description info...\n")
 j_desc <- map_chr(j$job_url, ~try(jobdescform(.x)))
-j <- j[j_title,]
 # matching keyword
 j_keys <- map(keyword, ~grepl(.x, j_desc))
 j_keys <- data.frame(j_keys[[1]], j_keys[[2]])
