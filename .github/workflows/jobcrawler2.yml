@@ -36,7 +36,7 @@ jobs:
         
       - name: Set today
         id: set_today
-        run: echo "::set-output name=today::$(date +'%a, %F at %H:%M %Z')"  
+        run: echo "::set-output name=today::$(TZ='Asia/Jakarta' date +'%a, %F at %H:%M %Z')"  
         
       - name: Commit results
         run: |
