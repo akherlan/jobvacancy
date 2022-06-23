@@ -1,8 +1,7 @@
 name: jobcrawler-v2
 on:
   schedule:
-    - cron: '0 23 * * *' # at 6 AM UTC+7
-    - cron: '0 11 * * *' # at 6 PM UTC+7
+    - cron: '0 11,23 * * *' # at 6 AM and 6 PM UTC+7
   workflow_dispatch:
 
 jobs:
@@ -40,7 +39,7 @@ jobs:
         
       - name: Commit results
         run: |
-          git config --global user.email "akherlan@users.noreply.github.com"
-          git config --global user.name "Andi"
-          git commit -am "Updated: ${{ steps.set_today.outputs.today }}" || echo "No changes to commit"
-          git push origin || echo "No changes to commit"
+          git config user.name "Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git commit -am "Updated: ${{ steps.set_today.outputs.today }}" || exit 0
+          git push
