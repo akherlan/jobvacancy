@@ -3,7 +3,7 @@ library(purrr)
 library(telegram.bot)
 
 # Keywords
-key_search = c("audit kepatuhan", "compliance audit")
+key_search <- c("audit kepatuhan", "compliance audit")
 location <- list("Jakarta", "Bogor", "Bekasi")
 keyword <- list("compliance", "kepatuhan")
 exclude_title <- list("tax", "manager")
