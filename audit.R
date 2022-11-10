@@ -1,3 +1,4 @@
+source("requirement.R")
 library(unmplymnt)
 library(purrr)
 library(telegram.bot)
@@ -118,9 +119,9 @@ if (nrow(g) == 0) { cat("No job from Glints to post today\n") } else {
   # create message
   msg <- map(1:nrow(g), ~{
     paste0(
-      "*", toupper(g$job_title[.x]), "*\nat ", g$company_name[.x], "\n\n",
+      "*", toupper(g$job_title[.x]), "*\nat ", g$company[.x], "\n\n",
       g$job_url[.x], 
-      "\n\nCategory: ", g$category_name[.x],
+      "\n\nCategory: ", g$category[.x],
       "\nKeyword: #", keyword[[1]], " #", keyword[[2]]
     )
   })
@@ -128,7 +129,8 @@ if (nrow(g) == 0) { cat("No job from Glints to post today\n") } else {
   cat("Sending message to Telegram...\n")
   send_msg(bot, msg)
   # save scraped details
-  g_scrape <- g[c("job_title", "company_name", 'source', "id")]
+  g_scrape <- g[c("job_title", "company", 'source', "job_id")]
+  names(g_scrape) <- c("job_title", "company_name", 'source', "id")
   g_scrape$timestamp <- as.character(Sys.time())
   g_scrape$timezone <- Sys.timezone()
   scraped <- rbind(scraped, g_scrape)
