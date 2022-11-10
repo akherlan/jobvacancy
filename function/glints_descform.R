@@ -29,20 +29,20 @@ glints_descform <- function(df, num) {
           mutate(
             text = str_replace_all(text, "\\n", "<br>"),
             text = str_replace_all(text, "\\u2028", "<br><br>"),
-            text = str_replace(text, "^\\d{1,2}\\.?\\s?", "• "),
-            text = str_replace(text, "^-\\s?", "• "),
-            text = str_replace(text, "^·\\s?", "• "),
-            text = str_replace_all(text, "<br>-\\s", "<br>• "),
+            text = str_replace(text, "^\\d{1,2}\\.?\\s?", "\u2022 "),
+            text = str_replace(text, "^-\\s?", "\u2022 "),
+            text = str_replace(text, "^·\\s?", "\u2022 "),
+            text = str_replace_all(text, "<br>-\\s", "<br>\u2022 "),
             text = ifelse(
               str_count(text, "([A-Za-z]+\\s)") <= 2 & 
-                !str_detect(text, "• "),
+                !str_detect(text, "\u2022 "),
               paste0("<br><strong>", text, "</strong><br>"),
               text)
           ) %>%
           .[[1]] %>% 
           toString() %>% 
           # post-formatting
-          str_replace_all(",\\s•\\s", "<br>• ") %>% 
+          str_replace_all(",\\s\u2022\\s", "<br>\u2022 ") %>% 
           str_replace_all("<br>,\\s", "<br>") %>% 
           str_replace_all(",\\s<br>", "<br><br>") %>% 
           str_replace_all("\\.,\\s", "\\.<br><br>") %>% 
@@ -73,7 +73,7 @@ glints_descform <- function(df, num) {
           .[[1]] %>% 
           toString() %>%
           # post-formatting
-          str_replace_all(",\\s•\\s", "<br>• ") %>% 
+          str_replace_all(",\\s\u2022\\s", "<br>\u2022 ") %>% 
           str_replace_all("<br>,\\s", "<br>") %>% 
           str_replace_all(",\\s<br>", "<br><br>") %>%
           str_replace_all("\\.,\\s", "\\.<br><br>") %>% 
@@ -81,10 +81,8 @@ glints_descform <- function(df, num) {
           str_replace_all("(<br>){3,}", "<br><br>") %>%
           str_remove("^<br>")
         
-      } 
-      
+      } else {
       # case 3: others
-      else {
         
         topost_text <- paste0("Click the link")
         
@@ -97,18 +95,15 @@ glints_descform <- function(df, num) {
     
     return(txt)
     
-  } 
-  
-  # condition 2:
-  # if there is no descriptionRaw column, scrape from the web
-  else {
-    
+  } else {
+    # condition 2:
+    # if there is no descriptionRaw column, scrape from the web 
     message("Kolom deskripsi tidak tersedia, mengambil deskripsi dari web")
     
     for (n in num) {
       
       # get html page
-      url <- get_joburl(df = df, num = n)
+      url <- df[["job_url"]][n]
       f <- read_html(url)
       desc <- html_element(f, ".DraftEditor-editorContainer")
       

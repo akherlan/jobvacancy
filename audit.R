@@ -39,10 +39,10 @@ j <- tryCatch({ suppressMessages(map_df(key_search, ~jobstreet(.x))) },
                 cat("ERROR: ", conditionMessage(e), "\n")
               })
 j <- unique(j)
-j <- map_df(location, ~{ j[grepl(.x, j$locations_name),] })
+j <- map_df(location, ~{ j[grepl(.x, j$city),] })
 
 # filtering with previous scraped data
-j <- j[!(j$id %in% scraped$id),]
+j <- j[!(j$job_id %in% scraped$id),]
 
 # filtering title
 j_title <- map(exclude_title, ~{ grepl(.x, tolower(j$job_title)) })
@@ -66,9 +66,9 @@ if (nrow(j) == 0) { cat("No job from Jobstreet to post today\n") } else {
   # create message
   msg <- map(1:nrow(j), ~{
     paste0(
-      "*", toupper(j$job_title[.x]), "*\nat ", j$company_meta_name[.x], "\n\n",
+      "*", toupper(j$job_title[.x]), "*\nat ", j$company[.x], "\n\n",
       j$job_url[.x], 
-      "\n\nCategory: ", j$categories_name,
+      "\n\nCategory: ", j$category,
       "\nKeyword: #", keyword[[1]], " #", keyword[[2]]
     )
   })
@@ -76,7 +76,7 @@ if (nrow(j) == 0) { cat("No job from Jobstreet to post today\n") } else {
   cat("Sending message to Telegram...\n")
   send_msg(bot, msg)
   # save scraped details
-  j_scrape <- j[c("job_title", "company_meta_name", 'source', "id")]
+  j_scrape <- j[c("job_title", "company", 'source', "job_id")]
   names(j_scrape) <- c("job_title", "company_name", 'source', "id")
   j_scrape$timestamp <- as.character(Sys.time())
   j_scrape$timezone <- Sys.timezone()
@@ -91,10 +91,10 @@ g <- tryCatch({ suppressMessages(map_df(key_search, ~glints(.x))) },
                 cat("ERROR: ", conditionMessage(e), "\n")
               })
 g <- unique(g)
-g <- map_df(location, ~{ g[grepl(.x, g$city_name),] })
+g <- map_df(location, ~{ g[grepl(.x, g$city),] })
 
 # filtering with previous scraped data
-g <- g[!(g$id %in% scraped$id),]
+g <- g[!(g$job_id %in% scraped$id),]
 
 # filtering title
 g_title <- map(exclude_title, ~{ grepl(.x, tolower(g$job_title)) })

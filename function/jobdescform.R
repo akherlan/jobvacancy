@@ -1,28 +1,27 @@
-#' Description formatting for JobStreet
-#' 
-#' @description Description scraping from JobStreet job URL.
-#' @param df vacancy data.frame generated from jstreet function.
-#' @param num numeric vector of rows.
-
-jstreet_descform <- function(df, num) {
-  
-  message("Mengambil detail deskripsi dari web")
-  
-  for (n in num) {
-    
+#' Job Description Formation
+#'
+#' @param urls vector of url list
+#' @param markdown Logical. If TRUE it will return markdown format text.
+#'
+#' @return vector text explanation contained jobdesc
+#'
+#' @import rvest
+#' @import dplyr
+#' @import stringr
+#'
+jobdescform <- function(urls, markdown = TRUE) {
+  for (n in urls) {
     # get html
-    if (is.null(df$job_url[n])) url <- get_joburl(id = df$id[n])
-    else url <- df$job_url[n]
+    url <- url(n, "rb")
     f <- read_html(url)
-    
+    close(url)
     # assume prefered description tag
-    desc <- html_element(f, ".YCeva_0") # sebelumnya .vDEj0_0
-    desc <- desc %>% 
-      html_children() %>% 
-      html_children() %>% 
+    desc <- html_element(f, ".YCeva_0")
+    desc <- desc %>%
+      html_children() %>%
+      html_children() %>%
       html_children()
-    
-    # chech indent
+    # check indent
     if (sum(html_name(desc) == "div") == length(desc)) {
       desc <- html_children(desc)
     } else if (sum(html_name(desc) == "ul") > 0 | sum(html_name(desc) == "ol") > 0) {
@@ -30,7 +29,6 @@ jstreet_descform <- function(df, num) {
     } else {
       desc <- desc
     }
-
     for (node in seq_along(desc)) {
       if (html_name(desc[node]) == "ul")
         d <- html_children(desc[node])
@@ -43,24 +41,22 @@ jstreet_descform <- function(df, num) {
       else
         descrip <- append(descrip, d)
     }
-    
     attributes(descrip)$class <- attributes(desc)$class
-    
     # description tabulation
     tag <- sapply(descrip, html_name)
     content <- sapply(descrip, html_text)
     desc <- tibble(tag, content)
-    
     # format text
-    desc <- desc %>% 
+    desc <- desc %>%
       mutate(content = str_squish(content),
-             content = ifelse(str_detect(tag, "li"), 
-                              str_replace(content, "^(.+)$", "• \\1"),
+             content = ifelse(str_detect(tag, "li"),
+                              str_replace(content, "^(.+)$", "\u2022 \\1"),
                               content),
-             content = ifelse((tag == "div" | tag == "p") & 
+             content = ifelse((tag == "div" | tag == "p") &
                                 str_count(content, "\\w+\\s") < 4 &
                                 !str_detect(content, "^-\\s") &
-                                !str_detect(content, "•\\s"),
+                                #!str_detect(content, "•\\s"),
+                                !str_detect(content, "\u2022\\s"),
                               str_replace(content, "^(.+)$", "<strong>\\1</strong>"),
                               content),
              content = ifelse((tag == "div" | tag == "p") & nchar(content) < 50,
@@ -71,27 +67,30 @@ jstreet_descform <- function(df, num) {
                               content),
              content = str_replace(content, "^(.+)$", "\\1<br>"),
              content = str_replace(content, "^<strong>", "<br><strong>"))
-    
     # filter long paragraph
-    desc <- desc %>% 
+    desc <- desc %>%
       filter(!((tag == "div" | tag == "p") & nchar(content) > 200))
-    
     # clean format
-    topost_text <- desc$content %>% 
-      toString() %>% 
-      str_replace_all(",\\s,\\s", "<br>") %>% 
-      str_replace_all(">,\\s", ">") %>% 
-      str_replace_all("<br>-\\s", "<br>• ") %>% 
-      str_replace_all("(\\w+\\.?\\s?)<br>(\\w+)", "\\1<br><br>\\2") %>% 
-      str_replace_all("<br></strong>(<br>)?", "</strong><br><br>") %>% 
-      str_remove("^<br>") %>% 
+    topost_text <- desc$content %>%
+      toString() %>%
+      str_replace_all(",\\s,\\s", "<br>") %>%
+      str_replace_all(">,\\s", ">") %>%
+      str_replace_all("<br>-\\s", "<br>\u2022 ") %>%
+      str_replace_all("(\\w+\\.?\\s?)<br>(\\w+)", "\\1<br><br>\\2") %>%
+      str_replace_all("<br></strong>(<br>)?", "</strong><br><br>") %>%
+      str_remove("^<br>") %>%
       str_remove("<br>$")
-    
-    if (n == num[[1]]) txt <- topost_text
+    if (n == urls[[1]]) txt <- topost_text
     else txt <- append(txt, topost_text)
-    
   }
-  
+  if (markdown) {
+    txt <- sapply(txt, function(html) {
+      html %>%
+        str_replace_all("<br>", "\n") %>%
+        str_replace_all("<strong>", "*") %>%
+        str_replace_all("</strong>", "*") %>%
+        str_replace_all("\\*\\*", "*")
+    }, USE.NAMES = FALSE)
+  }
   return(txt)
-  
 }

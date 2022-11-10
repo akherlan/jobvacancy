@@ -1,37 +1,44 @@
 #' Get vacancy data v2
 
-get_vacancy2 <- function(src, post_mode = TRUE) {
-  if (missing(src)) src <- "jobstreet"
-  key <- c("data analyst", "business analyst", "data engineer")
-  if (!(src %in% c("glints", "indeed", "jobstreet"))) {
-    stop('Argument src not in c("glints", "indeed", "jobstreet")')
+get_vacancy2 <- function(key, src, post_mode = TRUE) {
+
+  if (missing(key)) {
+    key <- c(
+      "data analyst",
+      "business analyst",
+      "data engineer"
+    )
+  }
+  
+  if (missing(src)) {
+    stop("Missing argument src")
+  }
+  
+  else if (!(src %in% c("glints", "kalibrr", "jobstreet"))) {
+    stop('Argument src not in c("glints", "kalibrr", "jobstreet")')
   }
   
   else if (src == "glints") {
-    message("From Glints...")
-    vacancy <- map_df(key, ~glints(.x, 15))
-    vacancy <- distinct(vacancy)
+    message("Get job post from Glints...")
+    vacancy <- map_df(key, ~suppressMessages(unmplymnt::glints(.x, 15))) %>% distinct()
   }
   
-  else if (src == "indeed") {
-    stop("Cooming soon!")
+  else if (src == "kalibrr") {
+    stop("Coming soon!")
   }
   
   else if (src == "jobstreet") {
-    message("From Jobstreet...")
-    vacancy <- map_df(key, ~jobstreet(.x, 1))
-    vacancy <- distinct(vacancy)
+    message("Get job post from Jobstreet...")
+    vacancy <- map_df(key, ~suppressMessages(unmplymnt::jobstreet(.x, 15))) %>% distinct()
   }
   
-  if (!post_mode) {
-    return(vacancy)
-  } else {
+  if (!post_mode) { return(vacancy) } else {
     
     # check scraped page
     scraped <- read.csv("output/scraped.csv")
-    vacancy <- filter(vacancy, is.na(match(vacancy$id, scraped$id)) == TRUE)
+    vacancy <- filter(vacancy, is.na(match(vacancy$job_id, scraped$id)) == TRUE)
     if (nrow(vacancy) == 0) {
-      message("Tidak ada postingan baru.")
+      message("Nothing to post.")
     # if there are new post
     } else {
       # detect R programming requirement
@@ -54,7 +61,8 @@ get_vacancy2 <- function(src, post_mode = TRUE) {
       }
       
       # save what was scraped
-      scraped <- data.frame(vacancy[,c("id", "job_title", "source")], get_time = Sys.time())
+      scraped <- data.frame(vacancy[,c("job_id", "job_title", "source")], get_time = Sys.time()) %>% 
+        rename(id = job_id)
       write.table(x = scraped,
                   file = "output/scraped.csv", 
                   sep = ",", 
@@ -65,9 +73,9 @@ get_vacancy2 <- function(src, post_mode = TRUE) {
       # check if there are duplicate post
       if (exists("r")) {
         posted_job <- read.csv("output/posted.csv")
-        posting_job <- vacancy[r, c("id", "job_title", "source")]
+        posting_job <- vacancy[r, c("job_id", "job_title", "source")]
         posting_job <- filter(posting_job, 
-                              is.na(match(posting_job$id, posted_job$id)) == TRUE)
+                              is.na(match(posting_job$job_id, posted_job$id)) == TRUE)
       } else {
         posting_job <- data.frame()
       }
@@ -78,7 +86,7 @@ get_vacancy2 <- function(src, post_mode = TRUE) {
       } else {
         
         # filter data
-        vacancy <- filter(vacancy, vacancy$id %in% posting_job$id)
+        vacancy <- filter(vacancy, vacancy$job_id %in% posting_job$id)
         
         # generate post
         if (src == "jobstreet") {
@@ -145,7 +153,7 @@ get_vacancy2 <- function(src, post_mode = TRUE) {
         # end of sending message script
         
         # save posted data
-        posting_job <- data.frame(posting_job, get_time = Sys.time())
+        posting_job <- data.frame(posting_job %>% rename(id = job_id), get_time = Sys.time())
         write.table(x = posting_job,
                     file = "output/posted.csv", 
                     sep = ",", 

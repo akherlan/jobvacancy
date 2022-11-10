@@ -31,11 +31,11 @@ get_joburl <- function(df, num, id) {
         if (nchar(df$id[[n]]) == 36) {
           # glints
           jurl <- "https://glints.com/id/opportunities/jobs/"
-        } else if (nchar(df$id[[n]]) == 7 & str_detect(df$id[[n]], "^[0-9]{7}$")) {
+        } else if (nchar(df$id[[n]]) == 7 & str_detect(df$job_id[[n]], "^[0-9]{7}$")) {
           # jobstreet
           jurl <- "https://www.jobstreet.co.id/id/job/"
         }
-        jurl <- paste0(jurl, df$id[[n]])
+        jurl <- paste0(jurl, df$job_id[[n]])
         if (n == num[[1]]) joburl <- jurl
         else joburl <- append(joburl, jurl)
       }

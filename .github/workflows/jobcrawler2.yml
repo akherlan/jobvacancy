@@ -25,7 +25,7 @@ jobs:
         
       - name: Install R packages
         run: | 
-          R -e 'install.packages(c("dplyr", "httr", "janitor", "jsonlite", "rvest", "stringr", "telegram.bot", "tidyr", "remotes"), dependencies = TRUE)'
+          R -e 'install.packages(c("dplyr", "httr", "janitor", "jsonlite", "rvest", "stringr", "telegram.bot", "tidyr", "purrr", "remotes"), dependencies = TRUE)'
           R -e 'remotes::install_github("akherlan/unmplymnt")'
           
       - name: Run crawler and forwarder script
