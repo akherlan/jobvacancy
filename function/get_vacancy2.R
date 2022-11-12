@@ -82,11 +82,11 @@ get_vacancy2 <- function(key, src, post_mode = TRUE) {
       
       # post and save for tracking
       if (nrow(posting_job) == 0) {
-        message("Tidak ada postingan baru.")
+        message("Nothing to post.")
       } else {
         
         # filter data
-        vacancy <- filter(vacancy, vacancy$job_id %in% posting_job$id)
+        vacancy <- filter(vacancy, vacancy$job_id %in% posting_job$job_id)
         
         # generate post
         if (src == "jobstreet") {
