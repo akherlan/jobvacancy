@@ -1,5 +1,5 @@
 cat("--------- Audit ----------\n")
-source("requirement.R")
+suppressPackageStartupMessages(source("requirement.R"))
 library(unmplymnt)
 library(purrr)
 library(telegram.bot)
