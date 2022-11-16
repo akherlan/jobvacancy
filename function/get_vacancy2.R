@@ -95,7 +95,7 @@ get_vacancy2 <- function(key, src, post_mode = TRUE) {
             sprintf(
               "<strong>%s</strong><br>at %s<br><br>%s<br><br>%s",
               str_to_upper(vacancy$job_title[j]),
-              vacancy$company_meta_name[j],
+              vacancy$company[j],
               desc[j],
               vacancy$job_url[j]
             )
