@@ -15,18 +15,18 @@ glints_post <- function(df, num) {
     
     # company
     # case 1: using company name from table
-    if (!is.null(df$company_name)) {
+    if (!is.null(df$company)) {
       
-      jobhire <- df$company_name[[n]]
+      jobhire <- df$company[[n]]
       
     }
     
     # case 2: pull company data from glints's web
-    else if (!is.null(df$company_id)) {
+    else if (!is.null(df$company)) {
       
       jobhire_baseurl <- "https://glints.com/api/companies/"
       jobhire <- fromJSON(
-        paste0(jobhire_baseurl, df$company_id[[n]])
+        paste0(jobhire_baseurl, df$company[[n]])
       )$data$name 
       message("Mencari data nama perusahaan dari web")
       
