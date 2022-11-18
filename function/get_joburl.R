@@ -28,10 +28,10 @@ get_joburl <- function(df, num, id) {
       message('argument "num" must be supplyed')
     } else {
       for (n in num) {
-        if (nchar(df$id[[n]]) == 36) {
+        if (nchar(df$job_id[[n]]) == 36) {
           # glints
           jurl <- "https://glints.com/id/opportunities/jobs/"
-        } else if (nchar(df$id[[n]]) == 7 & str_detect(df$job_id[[n]], "^[0-9]{7}$")) {
+        } else if (nchar(df$job_id[[n]]) == 7 & str_detect(df$job_id[[n]], "^[0-9]{7}$")) {
           # jobstreet
           jurl <- "https://www.jobstreet.co.id/id/job/"
         }
