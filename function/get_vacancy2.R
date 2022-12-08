@@ -20,7 +20,7 @@ get_vacancy2 <- function(key, src, post_mode = TRUE) {
   
   else if (src == "glints") {
     message("Get job post from Glints...")
-    vacancy <- map_df(key, ~suppressMessages(unmplymnt::glints(.x, 15))) %>% distinct()
+    vacancy <- map_df(key, ~suppressMessages(unmplymnt::glints(.x))) %>% distinct()
   }
   
   else if (src == "kalibrr") {
@@ -29,7 +29,7 @@ get_vacancy2 <- function(key, src, post_mode = TRUE) {
   
   else if (src == "jobstreet") {
     message("Get job post from Jobstreet...")
-    vacancy <- map_df(key, ~suppressMessages(unmplymnt::jobstreet(.x, 15))) %>% distinct()
+    vacancy <- map_df(key, ~suppressMessages(unmplymnt::jobstreet(.x))) %>% distinct()
   }
   
   if (!post_mode) { return(vacancy) } else {
