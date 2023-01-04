@@ -16,7 +16,8 @@ jobdescform <- function(urls, markdown = TRUE) {
     f <- read_html(url)
     close(url)
     # assume prefered description tag
-    desc <- html_element(f, ".YCeva_0")
+    desc <- html_element(f,  "._1x1c7ng0") # .YCeva_0
+    if (is.na(desc)) stop("ERROR: desc selector return NA")
     desc <- desc %>%
       html_children() %>%
       html_children() %>%
