@@ -8,7 +8,7 @@ library(telegram.bot)
 key_search <- c("audit kepatuhan", "compliance audit")
 location <- list("Jakarta", "Bogor", "Bekasi")
 keyword <- list("compliance", "kepatuhan")
-exclude_title <- list("tax", "manager")
+exclude_title <- list("tax", "manager", "senior")
 
 # Bot settings
 bot <- Bot(token = bot_token("IDNRBOT"))
