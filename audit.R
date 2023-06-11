@@ -67,13 +67,11 @@ post_job <- function(j, scraped) {
   write.csv(scraped, "output/audit.csv", row.names = FALSE)
 }
 
-# Load previous data
-scraped <- read.csv("output/audit.csv")
-
 # Jobstreet
+scraped <- read.csv("output/audit.csv")
 cat("Get data from Jobstreet...\n")
 j <- tryCatch({
-  suppressMessages(map_df(key_search, ~jobstreet(.x)))
+  map_df(key_search, ~jobstreet(.x))
 },
 error = function(e) {
   cat("ERROR: ", conditionMessage(e), "\n")
@@ -109,6 +107,7 @@ post_job(j, scraped)
 
 # Glints
 cat("Get data from Glints...\n")
+scraped <- read.csv("output/audit.csv")
 g <- tryCatch({
   suppressMessages(map_df(key_search, ~glints(.x)))
 },
