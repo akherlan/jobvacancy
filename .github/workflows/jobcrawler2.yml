@@ -1,7 +1,7 @@
 name: jobcrawler-v2
 on:
-  schedule:
-    - cron: '0 11,23 * * *' # at 6 AM and 6 PM UTC+7
+  #schedule:
+  #  - cron: '0 11,23 * * *' # at 6 AM and 6 PM UTC+7
   workflow_dispatch:
 
 jobs:
